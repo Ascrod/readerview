@@ -1,0 +1,10 @@
+content         readerview                      chrome/content/
+skin            readerview      classic/1.0     chrome/skin/
+locale          readerview      en-US           chrome/locale/en-US/
+resource        readerview                      modules/
+
+overlay         chrome://browser/content/browser.xul            chrome://readerview/content/readerMain.xul
+style           chrome://global/content/customizeToolbar.xul    chrome://readerview/skin/button/readerButton.css
+
+component       {c0bbcc77-8951-4c37-97a4-59e907358680}                  components/AboutReader.js
+contract        @mozilla.org/network/protocol/about;1?what=reader       {c0bbcc77-8951-4c37-97a4-59e907358680}

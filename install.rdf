@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+    <Description about="urn:mozilla:install-manifest">
+        <em:id>{1111dd1e-dd02-4c30-956f-f23c44dfea8e}</em:id>
+        <em:type>2</em:type>
+        <em:bootstrap>false</em:bootstrap>
+        <em:name>Reader View</em:name>
+        <em:version>0.9.0</em:version>
+        <em:creator>Ascrod</em:creator>
+        <em:homepageURL>https://github.com/ascrod/readerview</em:homepageURL>
+        <!--em:iconURL></em:iconURL>
+        <em:icon64URL></em:iconURL-->
+        <em:description>Implementation of Firefox Reader View as an add-on for the Pale Moon web browser.</em:description>
+        <em:targetApplication>
+            <Description>
+                <em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id>
+                <em:minVersion>27.0</em:minVersion>
+                <em:maxVersion>27.*</em:maxVersion>
+            </Description>
+        </em:targetApplication>
+    </Description>
+</RDF>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/css" href="chrome://global/skin/" ?>
+<?xml-stylesheet type="text/css" href="chrome://readerview/skin/button/readerButton.css" ?>
+<!DOCTYPE overlay SYSTEM "chrome://readerview/locale/readerview.dtd">
+<overlay id="readerview-browser-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript" src="chrome://readerview/content/readerMain.js"/>
+
+    <toolbarpalette id="BrowserToolbarPalette">
+        <toolbarbutton id="reader-mode-button"
+            label="Reader View"
+            class="toolbarbutton-1 chromeclass-toolbar-additional"
+            oncommand="ReaderParent.buttonClick(event);"
+        />
+    </toolbarpalette>
+    
+    <commandset id="mainCommandSet">
+        <command id="View:ReaderView"
+            oncommand="ReaderParent.toggleReaderMode(event);"
+        />
+    </commandset>
+
+    <keyset id="mainKeyset">
+        <!--key="&toggleReaderMode.key;"-->
+        <key id="toggleReaderMode"
+            command="View:ReaderView"
+            key="&readerview.toggleReaderMode.key;"
+            modifiers="accel,alt"
+            disabled="true"
+        />
+    </keyset>
+
+</overlay>
