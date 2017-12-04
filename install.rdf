@@ -5,7 +5,7 @@
         <em:type>2</em:type>
         <em:bootstrap>false</em:bootstrap>
         <em:name>Reader View</em:name>
-        <em:version>0.9.0</em:version>
+        <em:version>1.0.0</em:version>
         <em:creator>Ascrod</em:creator>
         <em:homepageURL>https://github.com/ascrod/readerview</em:homepageURL>
         <em:iconURL>chrome://readerview/skin/icons/reader32.svg</em:iconURL>
