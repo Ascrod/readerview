@@ -8,8 +8,8 @@
         <em:version>0.9.0</em:version>
         <em:creator>Ascrod</em:creator>
         <em:homepageURL>https://github.com/ascrod/readerview</em:homepageURL>
-        <!--em:iconURL></em:iconURL>
-        <em:icon64URL></em:iconURL-->
+        <em:iconURL>chrome://readerview/skin/icons/reader32.svg</em:iconURL>
+        <em:icon64URL>chrome://readerview/skin/icons/reader64.svg</em:icon64URL>
         <em:description>Implementation of Firefox Reader View as an add-on for the Pale Moon web browser.</em:description>
         <em:targetApplication>
             <Description>
