@@ -4,7 +4,7 @@ This is a port of Firefox Reader View for use as an add-on in the Pale Moon web 
 
 ## Usage
 
-Upon installation, a button with the Reader Mode icon is added to the Pale Moon interface. When you navigate to a page that the add-on detects is compatible with Reader View, the icon will turn blue. Clicking the icon will enable Reader Mode for that page and will turn the icon orange. Clicking the button again will exit Reader Mode, and the page will return to normal.
+Upon installation, a button with the Reader Mode icon is added to the Pale Moon interface. When you navigate to a page that the add-on detects is compatible with Reader View, the icon will turn blue. Clicking the icon will enable Reader Mode for that page and will turn the icon purple. Clicking the button again will exit Reader Mode, and the page will return to normal.
 
 All features in Reader View should be identical between Mozilla Firefox and this add-on, with the exception of three items:
 
