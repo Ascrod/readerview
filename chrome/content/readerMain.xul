@@ -20,6 +20,14 @@
         />
     </commandset>
 
+    <menupopup id="menu_viewPopup">
+        <menuitem id="menu_readerModeItem"
+            observes="View:ReaderView"
+            key="key_toggleReaderMode"
+            hidden="true"
+        />
+    </menupopup>
+
     <keyset id="mainKeyset">
         <!--key="&toggleReaderMode.key;"-->
         <key id="toggleReaderMode"
