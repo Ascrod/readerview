@@ -87,30 +87,23 @@ var ReaderParent = {
     let command = win.document.getElementById("View:ReaderView");
     let key = win.document.getElementById("toggleReaderMode");
     if (browser.currentURI.spec.startsWith("about:reader")) {
-//      button.setAttribute("readeractive", true);
-//      button.hidden = false;
-      button.setAttribute("state", "active");
-      button.disabled = false;
       let closeText = gStringBundle.GetStringFromName("readerView.close");
-      button.setAttribute("tooltiptext", closeText);
+      if (button) {
+        button.setAttribute("state", "active");
+        button.disabled = false;
+        button.setAttribute("tooltiptext", closeText);
+      }
       command.setAttribute("label", closeText);
       command.setAttribute("hidden", false);
       command.setAttribute("accesskey", gStringBundle.GetStringFromName("readerView.close.accesskey"));
       key.setAttribute("disabled", false);
     } else {
-//      button.removeAttribute("readeractive");
-//      button.hidden = !isArticle;
-      let enterText = "";
-      if(browser.isArticle) {
-        button.setAttribute("state", "enabled");
-        button.disabled = false;
-        enterText = gStringBundle.GetStringFromName("readerView.enter");
-      } else {
-        button.setAttribute("state", "disabled");
-        button.disabled = true;
-        enterText = gStringBundle.GetStringFromName("readerView.disabled");
+      let enterText = gStringBundle.GetStringFromName((browser.isArticle ? "readerView.enter" : "readerView.disabled"));
+      if (button) {
+        button.setAttribute("state", (browser.isArticle ? "enabled" : "disabled"));
+        button.disabled = !browser.isArticle;
+        button.setAttribute("tooltiptext", enterText);
       }
-      button.setAttribute("tooltiptext", enterText);
       command.setAttribute("label", enterText);
       command.setAttribute("hidden", !browser.isArticle);
       command.setAttribute("accesskey", gStringBundle.GetStringFromName("readerView.enter.accesskey"));
