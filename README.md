@@ -1,10 +1,8 @@
 # Reader View
 
-This is an implementation of Firefox Reader View for use as an add-on in the Pale Moon web browser. 
+As described on the Firefox support page, Reader View strips away clutter like buttons, ads, and background images, and changes the page's text size, contrast, and layout for better readability. This add-on brings that functionality to Pale Moon.
 
 ## Usage
-
-As described on the Firefox support page, Reader View strips away clutter like buttons, ads, and background images, and changes the page's text size, contrast, and layout for better readability.
 
 This extension adds a button with the Reader Mode icon to the Pale Moon interface. When the add-on detects that a page is compatible with Reader View, the button will enable and the icon will turn blue. Clicking the button will enable Reader View for that page, and the icon will turn purple. Clicking the button again will exit Reader View, and the page will return to normal.
 
