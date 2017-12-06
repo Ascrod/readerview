@@ -39,6 +39,11 @@ var Moonlight = {
       }
     };
     gBrowser.addProgressListener(TabsProgressListener);
+
+    function onCustomizeEnd(event) {
+      ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
+    }
+    gBrowser.ownerGlobal.addEventListener("aftercustomization", onCustomizeEnd, false);
   }
 };
 
