@@ -41,8 +41,8 @@ this.ReaderMode = {
     delete this.parseNodeLimit;
 
 //    Services.prefs.addObserver("reader.parse-node-limit", this);
-    Services.prefs.addObserver("reader.parse-node-limit", this, false);
-    return this.parseNodeLimit = Services.prefs.getIntPref("reader.parse-node-limit");
+    Services.prefs.addObserver("extensions.reader.parse-node-limit", this, false);
+    return this.parseNodeLimit = Services.prefs.getIntPref("extensions.reader.parse-node-limit");
   },
 
   get isEnabledForParseOnLoad() {
@@ -50,23 +50,23 @@ this.ReaderMode = {
 
     // Listen for future pref changes.
 //    Services.prefs.addObserver("reader.parse-on-load.", this);
-    Services.prefs.addObserver("reader.parse-on-load.", this, false);
+    Services.prefs.addObserver("extensions.reader.parse-on-load.", this, false);
 
     return this.isEnabledForParseOnLoad = this._getStateForParseOnLoad();
   },
 
   _getStateForParseOnLoad() {
-    let isEnabled = Services.prefs.getBoolPref("reader.parse-on-load.enabled");
-    let isForceEnabled = Services.prefs.getBoolPref("reader.parse-on-load.force-enabled");
+    let isEnabled = Services.prefs.getBoolPref("extensions.reader.parse-on-load.enabled");
+    let isForceEnabled = Services.prefs.getBoolPref("extensions.reader.parse-on-load.force-enabled");
     return isForceEnabled || isEnabled;
   },
 
   observe(aMessage, aTopic, aData) {
     switch (aTopic) {
       case "nsPref:changed":
-        if (aData.startsWith("reader.parse-on-load.")) {
+        if (aData.startsWith("extensions.reader.parse-on-load.")) {
           this.isEnabledForParseOnLoad = this._getStateForParseOnLoad();
-        } else if (aData === "reader.parse-node-limit") {
+        } else if (aData === "extensions.reader.parse-node-limit") {
           this.parseNodeLimit = Services.prefs.getIntPref(aData);
         }
         break;
@@ -278,7 +278,7 @@ this.ReaderMode = {
               } catch (ex) {
                 let errorMsg = "Reader mode disallowed meta refresh (reason: " + ex + ").";
 
-                if (Services.prefs.getBoolPref("reader.errors.includeURLs"))
+                if (Services.prefs.getBoolPref("extensions.reader.errors.includeURLs"))
                   errorMsg += " Refresh target URI: '" + newURL + "'.";
                 reject(errorMsg);
                 return;

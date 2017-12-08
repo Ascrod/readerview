@@ -583,7 +583,8 @@ AboutReader.prototype = {
   },
 
   _handleVisibilityChange() {
-    let colorScheme = Services.prefs.getCharPref("reader.color_scheme");
+//    let colorScheme = Services.prefs.getCharPref("reader.color_scheme");
+    let colorScheme = Services.prefs.getCharPref("extensions.reader.color_scheme");
     if (colorScheme != "auto") {
       return;
     }
