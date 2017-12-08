@@ -16,21 +16,6 @@ XPCOMUtils.defineLazyModuleGetter(this, "AboutReader", "resource://readerview/Ab
 
 var Moonlight = {
   init: function() {
-
-    //Add button to toolbar on first run
-    var first_run = Services.prefs.getBoolPref("extensions.reader.first_run");
-    if (first_run) {
-      const toolbarId = "nav-bar";
-      const buttonId = "reader-mode-button";
-      var toolbar = document.getElementById(toolbarId);
-      var button = document.getElementById(buttonId);
-      if (toolbar && !button) {
-        toolbar.setAttribute("currentset", toolbar.currentSet + "," + buttonId);
-        document.persist(toolbarId, "currentset");
-      }
-      Services.prefs.setBoolPref("extensions.reader.first_run", false);
-    }
-
     //Progress listeners for updating reader button
     var XULBrowserWindowListener = {
       onLocationChange(aWebProgress, aRequest, aLocationURI, aFLags) {
