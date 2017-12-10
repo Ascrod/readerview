@@ -12,60 +12,47 @@ XPCOMUtils.defineLazyModuleGetter(this, "ReaderParent", "resource://readerview/R
 XPCOMUtils.defineLazyModuleGetter(this, "ReaderMode", "resource://readerview/ReaderMode.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "AboutReader", "resource://readerview/AboutReader.jsm");
 
-//const gStringBundle = Services.strings.createBundle("chrome://readerview/locale/aboutReader.properties");
-
-var Moonlight = {
-  init: function() {
-
-    //Add button to toolbar on first run
-    var checkInstall = function() {
-      var first_run = Services.prefs.getBoolPref("extensions.reader.first_run");
-      if (first_run == true) {
-        Services.prefs.setBoolPref("extensions.reader.first_run", false);
-        const afterId = "urlbar-container";
-        const buttonId = "reader-mode-button";
-        var prevNode = document.getElementById(afterId);
-        var button = document.getElementById(buttonId);
-        if (prevNode && !button) {
-          var toolbar = prevNode.parentNode;
-          toolbar.insertItem(buttonId, prevNode.nextSibling);
-          toolbar.setAttribute("currentset", toolbar.currentSet);
-          document.persist(toolbar.id, "currentset");
-        }
-      }
-    };
-    window.addEventListener("load", function() { setTimeout(checkInstall, 5); }, false);
-
-    //Progress listeners for updating reader button
-    var XULBrowserWindowListener = {
-      onLocationChange(aWebProgress, aRequest, aLocationURI, aFLags) {
-        ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
-      }
-    };
-    gBrowser.addProgressListener(XULBrowserWindowListener);
-    
-    var TabsProgressListener = {
-      onLocationChange(aBrowser, aWebProgress, aRequest, aLocationURI,
-                                 aFlags) {
-        // Filter out location changes caused by anchor navigation
-        // or history.push/pop/replaceState.
-        if (aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) {
-          // Reader mode actually cares about these:
-//          let mm = gBrowser.selectedBrowser.messageManager;
-//          mm.sendAsyncMessage("Reader:PushState", {isArticle: gBrowser.selectedBrowser.isArticle});
-          AboutReaderListener.updateReaderButton(gBrowser.selectedBrowser.isArticle);
-          return;
-        }
-      }
-    };
-    gBrowser.addProgressListener(TabsProgressListener);
-
-    function onCustomizeEnd(event) {
-      ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
+//Method for adding reader button to toolbar on first run
+var checkInstall = function() {
+  var first_run = Services.prefs.getBoolPref("extensions.reader.first_run");
+  if (first_run == true) {
+    Services.prefs.setBoolPref("extensions.reader.first_run", false);
+    const afterId = "urlbar-container";
+    const buttonId = "reader-mode-button";
+    var prevNode = document.getElementById(afterId);
+    var button = document.getElementById(buttonId);
+    if (prevNode && !button) {
+      var toolbar = prevNode.parentNode;
+      toolbar.insertItem(buttonId, prevNode.nextSibling);
+      toolbar.setAttribute("currentset", toolbar.currentSet);
+      document.persist(toolbar.id, "currentset");
     }
-    gBrowser.ownerGlobal.addEventListener("aftercustomization", onCustomizeEnd, false);
   }
 };
+
+//Progress listeners for updating reader button
+var XULBrowserWindowListener = {
+  onLocationChange(aWebProgress, aRequest, aLocationURI, aFLags) {
+    ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
+  }
+};
+
+var TabsProgressListener = {
+  onLocationChange(aBrowser, aWebProgress, aRequest, aLocationURI,
+                             aFlags) {
+    // Filter out location changes caused by anchor navigation
+    // or history.push/pop/replaceState.
+    if (aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) {
+      // Reader mode actually cares about these:
+      AboutReaderListener.updateReaderButton(gBrowser.selectedBrowser.isArticle);
+      return;
+    }
+  }
+};
+
+function onCustomizeEnd(event) {
+  ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
+}
 
 var AboutReaderListener = {
 
@@ -74,35 +61,11 @@ var AboutReaderListener = {
   _isLeavingReaderableReaderMode: false,
 
   init(mm, win) {
-    //addEventListener("AboutReaderContentLoaded", this, false, true);
-    //addEventListener("DOMContentLoaded", this, false);
-    //addEventListener("pageshow", this, false);
-    //addEventListener("pagehide", this, false);
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
     gBrowser.addEventListener("DOMContentLoaded", this, false);
     gBrowser.addEventListener("pageshow", this, false);
     gBrowser.addEventListener("pagehide", this, false);
-    //addMessageListener("Reader:ToggleReaderMode", this);
-    //addMessageListener("Reader:PushState", this);
   },
-
-  //ReceiveMessage(message) {
-  //  switch (message.name) {
-  //    case "Reader:ToggleReaderMode":
-  //      if (!this.isAboutReader) {
-  //        this._articlePromise = ReaderMode.parseDocument(content.document).catch(Cu.reportError);
-  //        ReaderMode.enterReaderMode(docShell, content);
-  //      } else {
-  //        this._isLeavingReaderableReaderMode = this.isReaderableAboutReader;
-  //        ReaderMode.leaveReaderMode(docShell, content);
-  //      }
-  //      break;
-
-  //    case "Reader:PushState":
-  //      this.updateReaderButton(!!(message.data && message.data.isArticle));
-  //      break;
-  //  }
-  //},
 
   toggleReaderMode() {
     if (!this.isAboutReader) {
@@ -139,9 +102,6 @@ var AboutReaderListener = {
 
         if (content.document.body) {
           // Update the toolbar icon to show the "reader active" icon.
-//          sendAsyncMessage("Reader:UpdateReaderButton");
-//          ReaderParent.messageUpdateReaderButton({ target: gBrowser.selectedBrowser });
-//          new AboutReader(global, content, this._articlePromise);
           ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
           new AboutReader(content.document.docShell, content, this._articlePromise);
           this._articlePromise = null;
@@ -153,8 +113,6 @@ var AboutReaderListener = {
         // this._isLeavingReaderableReaderMode is used here to keep the Reader Mode icon
         // visible in the location bar when transitioning from reader-mode page
         // back to the readable source page.
-//        sendAsyncMessage("Reader:UpdateReaderButton", { isArticle: this._isLeavingReaderableReaderMode });
-//        ReaderParent.messageUpdateReaderButton({ data: { isArticle: this._isLeavingReaderableReaderMode }, target: gBrowser.selectedBrowser });
         var browser = gBrowser.selectedBrowser;
         browser.isArticle = this._isLeavingReaderableReaderMode;
         ReaderParent.updateReaderButton(browser);
@@ -195,7 +153,6 @@ var AboutReaderListener = {
 
   cancelPotentialPendingReadabilityCheck() {
     if (this._pendingReadabilityCheck) {
-      //removeEventListener("MozAfterPaint", this._pendingReadabilityCheck);
       gBrowser.removeEventListener("MozAfterPaint", this._pendingReadabilityCheck);
       delete this._pendingReadabilityCheck;
     }
@@ -226,14 +183,10 @@ var AboutReaderListener = {
     // Only send updates when there are articles; there's no point updating with
     // |false| all the time.
     if (ReaderMode.isProbablyReaderable(content.document)) {
-//      sendAsyncMessage("Reader:UpdateReaderButton", { isArticle: true });
-//      ReaderParent.messageUpdateReaderButton( { isArticle: true, target: gBrowser.selectedBrowser } );
       var browser = gBrowser.selectedBrowser;
       browser.isArticle = true;
       ReaderParent.updateReaderButton(browser);
     } else if (forceNonArticle) {
-//      sendAsyncMessage("Reader:UpdateReaderButton", { isArticle: false });
-//      ReaderParent.messageUpdateReaderButton( { isArticle: false, target: gBrowser.selectedBrowser } );
       var browser = gBrowser.selectedBrowser;
       browser.isArticle = false;
       ReaderParent.updateReaderButton(browser);
@@ -241,5 +194,11 @@ var AboutReaderListener = {
   }
 };
 
-Moonlight.init();
-AboutReaderListener.init();
+//Do initialization only once window has fully loaded
+window.addEventListener("load", function () {
+  setTimeout(checkInstall, 5);
+  gBrowser.addProgressListener(XULBrowserWindowListener);
+  gBrowser.ownerGlobal.addEventListener("aftercustomization", onCustomizeEnd, false);
+  gBrowser.addProgressListener(TabsProgressListener);
+  AboutReaderListener.init();
+}, false);
