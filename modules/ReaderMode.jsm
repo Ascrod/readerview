@@ -19,12 +19,10 @@ XPCOMUtils.defineLazyModuleGetter(this, "EventDispatcher", "resource://gre/modul
 XPCOMUtils.defineLazyModuleGetter(this, "OS", "resource://gre/modules/osfile.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "ReaderWorker", "resource://readerview/ReaderWorker.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "Task", "resource://gre/modules/Task.jsm");
-//XPCOMUtils.defineLazyModuleGetter(this, "LanguageDetector", "resource:///modules/translation/LanguageDetector.jsm");
 
 XPCOMUtils.defineLazyGetter(this, "Readability", function() {
   let scope = {};
   scope.dump = this.dump;
-//  Services.scriptloader.loadSubScript("resource://gre/modules/reader/Readability.js", scope);
   Services.scriptloader.loadSubScript("chrome://readerview/content/Readability.js", scope);
   return scope.Readability;
 });
@@ -40,7 +38,6 @@ this.ReaderMode = {
   get maxElemsToParse() {
     delete this.parseNodeLimit;
 
-//    Services.prefs.addObserver("reader.parse-node-limit", this);
     Services.prefs.addObserver("extensions.reader.parse-node-limit", this, false);
     return this.parseNodeLimit = Services.prefs.getIntPref("extensions.reader.parse-node-limit");
   },
@@ -49,7 +46,6 @@ this.ReaderMode = {
     delete this.isEnabledForParseOnLoad;
 
     // Listen for future pref changes.
-//    Services.prefs.addObserver("reader.parse-on-load.", this);
     Services.prefs.addObserver("extensions.reader.parse-on-load.", this, false);
 
     return this.isEnabledForParseOnLoad = this._getStateForParseOnLoad();
@@ -129,7 +125,6 @@ this.ReaderMode = {
 
     let outerHash = "";
     try {
-//      let uriObj = Services.io.newURI(url);
       let uriObj = Services.io.newURI(url, null, null);
       url = uriObj.specIgnoringRef;
       outerHash = uriObj.ref;
@@ -142,7 +137,6 @@ this.ReaderMode = {
     let originalUrl = searchParams.get("url");
     if (outerHash) {
       try {
-//        let uriObj = Services.io.newURI(originalUrl);
         let uriObj = Services.io.newURI(originalUrl, null, null);
         uriObj = Services.io.newURI("#" + outerHash, null, uriObj);
         originalUrl = uriObj.spec;
@@ -175,9 +169,7 @@ this.ReaderMode = {
    * Decides whether or not a document is reader-able without parsing the whole thing.
    *
    * @param doc A document to parse.
-//   * @return boolean Whether or not we should show the reader mode button.
-   * @return {Promise}
-   * Determines whether or not we should activate the reader mode button.
+   * @return boolean Whether or not we should show the reader mode button.
    */
   isProbablyReaderable(doc) {
     // Only care about 'real' HTML documents:
@@ -185,7 +177,6 @@ this.ReaderMode = {
       return false;
     }
 
-//    let uri = Services.io.newURI(doc.location.href);
     let uri = Services.io.newURI(doc.location.href, null, null);
     if (!this._shouldCheckUri(uri)) {
       return false;
@@ -266,7 +257,6 @@ this.ReaderMode = {
           if (content) {
             let urlIndex = content.toUpperCase().indexOf("URL=");
             if (urlIndex > -1) {
-//              let baseURI = Services.io.newURI(url);
               let baseURI = Services.io.newURI(url, null, null);
               let newURI = Services.io.newURI(content.substring(urlIndex + 4), null, baseURI);
               let newURL = newURI.spec;

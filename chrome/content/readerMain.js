@@ -60,7 +60,7 @@ var AboutReaderListener = {
 
   _isLeavingReaderableReaderMode: false,
 
-  init(mm, win) {
+  init() {
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
     gBrowser.addEventListener("DOMContentLoaded", this, false);
     gBrowser.addEventListener("pageshow", this, false);
@@ -103,7 +103,7 @@ var AboutReaderListener = {
         if (content.document.body) {
           // Update the toolbar icon to show the "reader active" icon.
           ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
-          new AboutReader(content.document.docShell, content, this._articlePromise);
+          new AboutReader(content, this._articlePromise);
           this._articlePromise = null;
         }
         break;
@@ -165,7 +165,6 @@ var AboutReaderListener = {
       this.cancelPotentialPendingReadabilityCheck();
     }
     this._pendingReadabilityCheck = this.onPaintWhenWaitedFor.bind(this, forceNonArticle);
-    //addEventListener("MozAfterPaint", this._pendingReadabilityCheck);
     gBrowser.addEventListener("MozAfterPaint", this._pendingReadabilityCheck);
   },
 

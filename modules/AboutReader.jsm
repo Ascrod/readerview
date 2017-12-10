@@ -8,12 +8,10 @@ var Ci = Components.interfaces, Cc = Components.classes, Cu = Components.utils;
 
 this.EXPORTED_SYMBOLS = [ "AboutReader" ];
 
-//Cu.import("resource://gre/modules/ReaderMode.jsm");
 Cu.import("resource://readerview/ReaderMode.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-//XPCOMUtils.defineLazyModuleGetter(this, "AsyncPrefs", "resource://gre/modules/AsyncPrefs.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "NarrateControls", "resource://gre/modules/narrate/NarrateControls.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "Rect", "resource://gre/modules/Geometry.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "Task", "resource://gre/modules/Task.jsm");
@@ -23,13 +21,10 @@ XPCOMUtils.defineLazyModuleGetter(this, "PlacesUtils", "resource://gre/modules/P
 
 var gStrings = Services.strings.createBundle("chrome://readerview/locale/aboutReader.properties");
 
-//const gIsFirefoxDesktop = Services.appinfo.ID == "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
-
-var AboutReader = function(mm, win, articlePromise) {
+var AboutReader = function(win, articlePromise) {
   let url = this._getOriginalUrl(win);
   if (!(url.startsWith("http://") || url.startsWith("https://"))) {
     let errorMsg = "Only http:// and https:// URLs can be loaded in about:reader.";
-//    if (Services.prefs.getBoolPref("reader.errors.includeURLs"))
     if (Services.prefs.getBoolPref("extensions.reader.errors.includeURLs"))
       errorMsg += " Tried to load: " + url + ".";
     Cu.reportError(errorMsg);
@@ -38,12 +33,6 @@ var AboutReader = function(mm, win, articlePromise) {
   }
 
   let doc = win.document;
-
-//  this._mm = mm;
-//  this._mm.addMessageListener("Reader:CloseDropdown", this);
-//  this._mm.addMessageListener("Reader:AddButton", this);
-//  this._mm.addMessageListener("Reader:RemoveButton", this);
-//  this._mm.addMessageListener("Reader:GetStoredArticleData", this);
 
   this._docRef = Cu.getWeakReference(doc);
   this._winRef = Cu.getWeakReference(win);
@@ -83,15 +72,11 @@ var AboutReader = function(mm, win, articlePromise) {
   this._setupStyleDropdown();
   this._setupButton("close-button", this._onReaderClose.bind(this), "aboutReader.toolbar.close");
 
-//  if (gIsFirefoxDesktop) {
-//    // we're ready for any external setup, send a signal for that.
-//    this._mm.sendAsyncMessage("Reader:OnSetup");
-//  }
-//TODO: Test this
+    // we're ready for any external setup, send a signal for that.
+//TODO: Implement this
 //  document.dispatchEvent(new CustomEvent("ReaderOnSetup"));
 
 
-//  let colorSchemeValues = JSON.parse(Services.prefs.getCharPref("reader.color_scheme.values"));
   let colorSchemeValues = JSON.parse(Services.prefs.getCharPref("extensions.reader.color_scheme.values"));
   let colorSchemeOptions = colorSchemeValues.map((value) => {
     return {
@@ -101,7 +86,6 @@ var AboutReader = function(mm, win, articlePromise) {
     };
   });
 
-//  let colorScheme = Services.prefs.getCharPref("reader.color_scheme");
   let colorScheme = Services.prefs.getCharPref("extensions.reader.color_scheme");
   this._setupSegmentedButton("color-scheme-buttons", colorSchemeOptions, colorScheme, this._setColorSchemePref.bind(this));
   this._setColorSchemePref(colorScheme);
@@ -119,7 +103,6 @@ var AboutReader = function(mm, win, articlePromise) {
       itemClass: "serif-button" },
   ];
 
-//  let fontType = Services.prefs.getCharPref("reader.font_type");
   let fontType = Services.prefs.getCharPref("extensions.reader.font_type");
   this._setupSegmentedButton("font-type-buttons", fontTypeOptions, fontType, this._setFontType.bind(this));
   this._setFontType(fontType);
@@ -187,7 +170,6 @@ AboutReader.prototype = {
     if (this._toolbarVertical !== undefined) {
       return this._toolbarVertical;
     }
-//    return this._toolbarVertical = Services.prefs.getBoolPref("reader.toolbar.vertical");
     return this._toolbarVertical = Services.prefs.getBoolPref("extensions.reader.toolbar.vertical");
   },
 
@@ -199,48 +181,6 @@ AboutReader.prototype = {
 
     return _viewId;
   },
-
-//  receiveMessage(message) {
-//    switch (message.name) {
-//      // Triggered by Android user pressing BACK while the banner font-dropdown is open.
-//      case "Reader:CloseDropdown": {
-//        // Just close it.
-//        this._closeDropdowns();
-//        break;
-//      }
-//
-//      case "Reader:AddButton": {
-//        if (message.data.id && message.data.image &&
-//            !this._doc.getElementById(message.data.id)) {
-//          let btn = this._doc.createElement("button");
-//          btn.setAttribute("class", "button");
-//          btn.setAttribute("style", "background-image: url('" + message.data.image + "')");
-//          btn.setAttribute("id", message.data.id);
-//          if (message.data.title)
-//            btn.setAttribute("title", message.data.title);
-//          if (message.data.text)
-//            btn.textContent = message.data.text;
-//          let tb = this._doc.getElementById("reader-toolbar");
-//          tb.appendChild(btn);
-//          this._setupButton(message.data.id, button => {
-//            this._mm.sendAsyncMessage("Reader:Clicked-" + button.getAttribute("id"), { article: this._article });
-//          });
-//        }
-//        break;
-//      }
-//      case "Reader:RemoveButton": {
-//        if (message.data.id) {
-//          let btn = this._doc.getElementById(message.data.id);
-//          if (btn)
-//            btn.remove();
-//        }
-//        break;
-//      }
-//      case "Reader:GetStoredArticleData": {
-//        this._mm.sendAsyncMessage("Reader:StoredArticleData", { article: this._article });
-//      }
-//    }
-//  },
 
   addButton(id, title, text, image) {
     if (id && image && !this._doc.getElementById(id)) {
@@ -255,7 +195,7 @@ AboutReader.prototype = {
       let tb = this._doc.getElementById("reader-toolbar");
       tb.appendChild(btn);
       this._setupButton(id, button => {
-//TODO: Test this
+//TODO: implement this
 //        document.dispatchEvent(new CustomEvent("ReaderClicked-" + button.getAttribute("id"), {article: this._article }));
       });
     };
@@ -284,11 +224,6 @@ AboutReader.prototype = {
         break;
       case "scroll":
         this._closeDropdowns(true);
-//        if (!gIsFirefoxDesktop && this._scrollOffset != aEvent.pageY) {
-//          let isScrollingUp = this._scrollOffset > aEvent.pageY;
-//          this._setSystemUIVisibility(isScrollingUp);
-//          this._setToolbarVisibility(isScrollingUp);
-//        }
         this._scrollOffset = aEvent.pageY;
         break;
       case "resize":
@@ -314,10 +249,6 @@ AboutReader.prototype = {
         // Close the Banners Font-dropdown, cleanup Android BackPressListener.
         this._closeDropdowns();
 
-//        this._mm.removeMessageListener("Reader:CloseDropdown", this);
-//        this._mm.removeMessageListener("Reader:AddButton", this);
-//        this._mm.removeMessageListener("Reader:RemoveButton", this);
-//        this._mm.removeMessageListener("Reader:GetStoredArticleData", this);
         this._windowUnloaded = true;
         break;
     }
@@ -330,14 +261,10 @@ AboutReader.prototype = {
 
     Services.obs.removeObserver(this, "inner-window-destroyed");
 
-//    this._mm.removeMessageListener("Reader:CloseDropdown", this);
-//    this._mm.removeMessageListener("Reader:AddButton", this);
-//    this._mm.removeMessageListener("Reader:RemoveButton", this);
     this._windowUnloaded = true;
   },
 
   _onReaderClose() {
-//    ReaderMode.leaveReaderMode(this._mm.docShell, this._win);
     ReaderMode.leaveReaderMode(this._win.content.document.docShell, this._win);
   },
 
@@ -349,7 +276,6 @@ AboutReader.prototype = {
 
     this._fontSize = newFontSize;
     containerClasses.add("font-size" + this._fontSize);
-//    return AsyncPrefs.set("reader.font_size", this._fontSize);
     Services.prefs.setIntPref("extensions.reader.font_size", this._fontSize);
   },
 
@@ -359,10 +285,8 @@ AboutReader.prototype = {
 
     // Sample text shown in Android UI.
     let sampleText = this._doc.getElementById("font-size-sample");
-//    sampleText.textContent = gStrings.GetStringFromName("aboutReader.fontTypeSample");
     sampleText.textContent = gStrings.GetStringFromName("aboutReader.fontTypeSample");
 
-//    let currentSize = Services.prefs.getIntPref("reader.font_size");
     let currentSize = Services.prefs.getIntPref("extensions.reader.font_size");
     currentSize = Math.max(FONT_SIZE_MIN, Math.min(FONT_SIZE_MAX, currentSize));
 
@@ -424,7 +348,6 @@ AboutReader.prototype = {
 
     this._contentWidth = newContentWidth;
     containerClasses.add("content-width" + this._contentWidth);
-//    return AsyncPrefs.set("reader.content_width", this._contentWidth);
     Services.prefs.setIntPref("extensions.reader.content_width", this._contentWidth);
   },
 
@@ -432,7 +355,6 @@ AboutReader.prototype = {
     const CONTENT_WIDTH_MIN = 1;
     const CONTENT_WIDTH_MAX = 9;
 
-//    let currentContentWidth = Services.prefs.getIntPref("reader.content_width");
     let currentContentWidth = Services.prefs.getIntPref("extensions.reader.content_width");
     currentContentWidth = Math.max(CONTENT_WIDTH_MIN, Math.min(CONTENT_WIDTH_MAX, currentContentWidth));
 
@@ -494,7 +416,6 @@ AboutReader.prototype = {
 
     this._lineHeight = newLineHeight;
     contentClasses.add("line-height" + this._lineHeight);
-//    return AsyncPrefs.set("reader.line_height", this._lineHeight);
     Services.prefs.setIntPref("extensions.reader.line_height", this._lineHeight);
   },
 
@@ -502,7 +423,6 @@ AboutReader.prototype = {
     const LINE_HEIGHT_MIN = 1;
     const LINE_HEIGHT_MAX = 9;
 
-//    let currentLineHeight = Services.prefs.getIntPref("reader.line_height");
     let currentLineHeight = Services.prefs.getIntPref("extensions.reader.line_height");
     currentLineHeight = Math.max(LINE_HEIGHT_MIN, Math.min(LINE_HEIGHT_MAX, currentLineHeight));
 
@@ -583,7 +503,6 @@ AboutReader.prototype = {
   },
 
   _handleVisibilityChange() {
-//    let colorScheme = Services.prefs.getCharPref("reader.color_scheme");
     let colorScheme = Services.prefs.getCharPref("extensions.reader.color_scheme");
     if (colorScheme != "auto") {
       return;
@@ -642,10 +561,8 @@ AboutReader.prototype = {
   // Pref values include "dark", "light", and "auto", which automatically switches
   // between light and dark color schemes based on the ambient light level.
   _setColorSchemePref(colorSchemePref) {
-//    this._enableAmbientLighting(colorSchemePref === "auto");
     this._setColorScheme(colorSchemePref);
 
-//    AsyncPrefs.set("reader.color_scheme", colorSchemePref);
     Services.prefs.setCharPref("extensions.reader.color_scheme", colorSchemePref);
   },
 
@@ -661,13 +578,11 @@ AboutReader.prototype = {
     this._fontType = newFontType;
     bodyClasses.add(this._fontType);
 
-//    AsyncPrefs.set("reader.font_type", this._fontType);
     Services.prefs.setCharPref("extensions.reader.font_type", this._fontType);
   },
 
   _setSystemUIVisibility(visible) {
-//    this._mm.sendAsyncMessage("Reader:SystemUIVisibility", { visible });
-//TODO: Test this
+//TODO: Implement this
 //    document.dispatchEvent(new CustomEvent("ReaderSystemUIVisibility"));
   },
 
@@ -721,16 +636,6 @@ AboutReader.prototype = {
 
   _getArticle(url) {
     return new Promise((resolve, reject) => {
-//      let listener = (message) => {
-//        this._mm.removeMessageListener("Reader:ArticleData", listener);
-//        if (message.data.newURL) {
-//          reject({ newURL: message.data.newURL });
-//          return;
-//        }
-//        resolve(message.data.article);
-//      };
-//      this._mm.addMessageListener("Reader:ArticleData", listener);
-//      this._mm.sendAsyncMessage("Reader:ArticleGet", { url });
       try {
         resolve(ReaderMode.downloadAndParseDocument(url));
       } catch (e) {
@@ -743,19 +648,10 @@ AboutReader.prototype = {
   },
 
   _requestFavicon() {
-//    let handleFaviconReturn = (message) => {
-//      this._mm.removeMessageListener("Reader:FaviconReturn", handleFaviconReturn);
-//      this._loadFavicon(message.data.url, message.data.faviconUrl);
-//    };
-
-//    this._mm.addMessageListener("Reader:FaviconReturn", handleFaviconReturn);
-//    this._mm.sendAsyncMessage("Reader:FaviconRequest", { url: this._article.url });
-
     let url = this._article.url;
     let faviconUrl = PlacesUtils.promiseFaviconLinkUrl(url);
     var self = this;
     faviconUrl.then(function onResolution(favicon) {
-//      this._loadFavicon(url, favicon.path.replace(/^favicon:/, ""));
       self._loadFavicon(url, favicon.path.replace(/^favicon:/, ""));
     },
     function onRejection(reason) {
@@ -878,7 +774,6 @@ AboutReader.prototype = {
 
     this._domainElement.href = article.url;
     let articleUri = Services.io.newURI(article.url, null, null);
-//    let articleUri = Services.io.newURI(article.url);
     this._domainElement.textContent = this._stripHost(articleUri.host);
     this._creditsElement.textContent = article.byline;
 
@@ -1064,8 +959,7 @@ AboutReader.prototype = {
 
     // Trigger BackPressListener initialization in Android.
     dropdown.classList.add("open");
-//    this._mm.sendAsyncMessage("Reader:DropdownOpened", this.viewId);
-//TODO: Test this
+//TODO: Implement this
 //    document.dispatchEvent(new CustomEvent("ReaderDropdownOpened"));
   },
 
@@ -1087,8 +981,7 @@ AboutReader.prototype = {
 
     // Trigger BackPressListener cleanup in Android.
     if (openDropdowns.length) {
-//      this._mm.sendAsyncMessage("Reader:DropdownClosed", this.viewId);
-//TODO: Test this
+//TODO: Implement this
 //      document.dispatchEvent(new CustomEvent("ReaderDropdownClosed"));
     }
   },

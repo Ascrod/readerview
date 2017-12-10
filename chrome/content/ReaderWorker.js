@@ -11,8 +11,6 @@
  */
 
 importScripts("resource://gre/modules/workers/require.js",
-//              "resource://gre/modules/reader/JSDOMParser.js",
-//              "resource://gre/modules/reader/Readability.js");
               "chrome://readerview/content/JSDOMParser.js",
               "chrome://readerview/content/Readability.js");
 
