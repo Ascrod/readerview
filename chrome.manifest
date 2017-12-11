@@ -1,5 +1,8 @@
 content         readerview                      chrome/content/
 skin            readerview      classic/1.0     chrome/skin/
+skin            readerview_os   classic/1.0     chrome/skin/windows/    os=WinNT
+skin            readerview_os   classic/1.0     chrome/skin/osx/        os=Darwin
+skin            readerview_os   classic/1.0     chrome/skin/linux/
 locale          readerview      en-US           chrome/locale/en-US/
 resource        readerview                      modules/
 
