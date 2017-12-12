@@ -28,7 +28,7 @@
     </menupopup>
 
     <keyset id="mainKeyset">
-        <key id="toggleReaderMode"
+        <key id="key_toggleReaderMode"
             command="View:ReaderView"
             key="R"
             modifiers="accel,alt"

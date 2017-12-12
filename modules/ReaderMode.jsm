@@ -9,6 +9,19 @@ this.EXPORTED_SYMBOLS = ["ReaderMode"];
 
 const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
 
+// Class names to preserve in the readerized output. We preserve these class
+// names so that rules in aboutReader.css can match them.
+const CLASSES_TO_PRESERVE = [
+  "caption",
+  "hidden",
+  "invisble",
+  "sr-only",
+  "visually-hidden",
+  "visuallyhidden",
+  "wp-caption",
+  "wp-caption-text",
+];
+
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -233,6 +246,14 @@ this.ReaderMode = {
   }),
 
   _downloadDocument(url) {
+    try {
+      if (!this._shouldCheckUri(Services.io.newURI(url))) {
+        return null;
+      }
+    } catch (ex) {
+      Cu.reportError(new Error(`Couldn't create URI from ${url} to download: ${ex}`));
+      return null;
+    }
     return new Promise((resolve, reject) => {
       let xhr = new XMLHttpRequest();
       xhr.open("GET", url, true);
@@ -436,6 +457,10 @@ this.ReaderMode = {
     let serializer = Cc["@mozilla.org/xmlextras/xmlserializer;1"].
                      createInstance(Ci.nsIDOMSerializer);
     let serializedDoc = serializer.serializeToString(doc);
+ 
+    let options = {
+      classesToPreserve: CLASSES_TO_PRESERVE,
+    };
 
     let article = null;
     try {
