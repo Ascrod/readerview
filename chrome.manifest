@@ -14,7 +14,7 @@ skin            readerview_os   classic/1.0     chrome/skin/linux/
 #locale          readerview      ast             chrome/locale/ast/
 #locale          readerview      az              chrome/locale/az/
 #locale          readerview      be              chrome/locale/be/
-#locale          readerview      bg              chrome/locale/bg/
+locale          readerview      bg              chrome/locale/bg/
 #locale          readerview      bn-BD           chrome/locale/bn-BD/
 #locale          readerview      bn-IN           chrome/locale/bn-IN/
 #locale          readerview      br              chrome/locale/br/
@@ -116,7 +116,7 @@ locale          readerview      sv-SE           chrome/locale/sv-SE/
 locale          readerview      tr              chrome/locale/tr/
 #locale          readerview      trs             chrome/locale/trs/
 #locale          readerview      tsz             chrome/locale/tsz/
-#locale          readerview      uk              chrome/locale/uk/
+locale          readerview      uk              chrome/locale/uk/
 #locale          readerview      ur              chrome/locale/ur/
 #locale          readerview      uz              chrome/locale/uz/
 #locale          readerview      vi              chrome/locale/vi/
