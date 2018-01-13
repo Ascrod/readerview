@@ -27,7 +27,7 @@ locale          readerview      cs              chrome/locale/cs/
 #locale          readerview      da              chrome/locale/da/
 locale          readerview      de              chrome/locale/de/
 #locale          readerview      dsb             chrome/locale/dsb/
-#locale          readerview      el              chrome/locale/el/
+locale          readerview      el              chrome/locale/el/
 locale          readerview      en-GB           chrome/locale/en-GB/
 locale          readerview      en-US           chrome/locale/en-US/
 locale          readerview      en-ZA           chrome/locale/en-ZA/
@@ -58,7 +58,7 @@ locale          readerview      hu              chrome/locale/hu/
 #locale          readerview      id              chrome/locale/id/
 #locale          readerview      is              chrome/locale/is/
 locale          readerview      it              chrome/locale/it/
-#locale          readerview      ja              chrome/locale/ja/
+locale          readerview      ja              chrome/locale/ja/
 #locale          readerview      ka              chrome/locale/ka/
 #locale          readerview      kab             chrome/locale/kab/
 #locale          readerview      kk              chrome/locale/kk/
@@ -111,7 +111,7 @@ locale          readerview      sv-SE           chrome/locale/sv-SE/
 #locale          readerview      ta              chrome/locale/ta/
 #locale          readerview      te              chrome/locale/te/
 #locale          readerview      th              chrome/locale/th/
-#locale          readerview      tl              chrome/locale/tl/
+locale          readerview      tl              chrome/locale/tl/
 #locale          readerview      tn              chrome/locale/tn/
 locale          readerview      tr              chrome/locale/tr/
 #locale          readerview      trs             chrome/locale/trs/
