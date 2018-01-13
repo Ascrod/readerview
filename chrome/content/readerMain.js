@@ -21,7 +21,7 @@ var AboutReaderListener = {
     gBrowser.addEventListener("pageshow", this, false);
     gBrowser.addEventListener("pagehide", this, false);
     gBrowser.addProgressListener(this.browserWindowListener);
-    gBrowser.addProgressListener(this.tabsProgressListener);
+    gBrowser.addTabsProgressListener(this.tabsProgressListener);
     window.addEventListener("aftercustomization", this.onCustomizeEnd, false);
   },
 
@@ -45,7 +45,7 @@ var AboutReaderListener = {
 
   //Updates the reader button on change of the URL.
   browserWindowListener: {
-    onLocationChange(aWebProgress, aRequest, aLocationURI, aFLags) {
+    onLocationChange(aWebProgress, aRequest, aLocationURI, aFlags) {
       ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
     }
   },
