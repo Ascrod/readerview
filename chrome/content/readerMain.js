@@ -44,7 +44,8 @@ var TabsProgressListener = {
     // or history.push/pop/replaceState.
     if (aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) {
       // Reader mode actually cares about these:
-      AboutReaderListener.updateReaderButton(gBrowser.selectedBrowser.isArticle);
+      var browser = gBrowser.selectedBrowser;
+      AboutReaderListener.updateReaderButton(browser, browser.isArticle);
       return;
     }
   }
@@ -56,10 +57,6 @@ function onCustomizeEnd(event) {
 
 var AboutReaderListener = {
 
-  _articlePromise: null,
-
-  _isLeavingReaderableReaderMode: false,
-
   init() {
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
     gBrowser.addEventListener("DOMContentLoaded", this, false);
@@ -68,56 +65,61 @@ var AboutReaderListener = {
   },
 
   toggleReaderMode() {
-    if (!this.isAboutReader) {
-      this._articlePromise = ReaderMode.parseDocument(content.document).catch(Cu.reportError);
-      ReaderMode.enterReaderMode(content.document.docShell, content);
+    var browser = gBrowser.selectedBrowser;
+    if (!this.isAboutReader(browser)) {
+      browser._articlePromise = ReaderMode.parseDocument(browser.contentWindow.document).catch(Cu.reportError);
+      ReaderMode.enterReaderMode(browser.contentWindow.document.docShell, browser.contentWindow);
     } else {
-      this._isLeavingReaderableReaderMode = this.isReaderableAboutReader;
-      ReaderMode.leaveReaderMode(content.document.docShell, content);
+      browser._isLeavingReaderableReaderMode = this.isReaderableAboutReader(browser);
+      ReaderMode.leaveReaderMode(browser.contentWindow.document.docShell, browser.contentWindow);
     }
   },
 
-  get isAboutReader() {
-    if (!content) {
+  isAboutReader(browser) {
+    if (!browser.contentWindow) {
       return false;
     }
-    return content.document.documentURI.startsWith("about:reader");
+    return browser.contentWindow.document.documentURI.startsWith("about:reader");
   },
 
-  get isReaderableAboutReader() {
-    return this.isAboutReader &&
-      !content.document.documentElement.dataset.isError;
+  isReaderableAboutReader(browser) {
+    return this.isAboutReader(browser) &&
+      !browser.contentWindow.document.documentElement.dataset.isError;
   },
 
   handleEvent(aEvent) {
-    if (aEvent.originalTarget.defaultView != content) {
+    var browser = gBrowser.getBrowserForDocument(aEvent.target.defaultView.document);
+    if (!browser) {
       return;
     }
 
     switch (aEvent.type) {
       case "AboutReaderContentLoaded":
-        if (!this.isAboutReader) {
+        if (!this.isAboutReader(browser)) {
           return;
         }
 
-        if (content.document.body) {
+        if (browser.contentWindow.document.body) {
           // Update the toolbar icon to show the "reader active" icon.
-          ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
-          new AboutReader(content, this._articlePromise);
-          this._articlePromise = null;
+          ReaderParent.updateReaderButton(browser);
+          new AboutReader(browser.contentWindow, browser._articlePromise);
+          browser._articlePromise = null;
         }
         break;
 
       case "pagehide":
-        this.cancelPotentialPendingReadabilityCheck();
-        // this._isLeavingReaderableReaderMode is used here to keep the Reader Mode icon
+        this.cancelPotentialPendingReadabilityCheck(browser);
+        // browser._isLeavingReaderableReaderMode is used here to keep the Reader Mode icon
         // visible in the location bar when transitioning from reader-mode page
         // back to the readable source page.
-        var browser = gBrowser.selectedBrowser;
-        browser.isArticle = this._isLeavingReaderableReaderMode;
+        if (browser._isLeavingReaderableReaderMode === undefined)
+        {
+          browser._isLeavingReaderableReaderMode = false;
+        }
+        browser.isArticle = browser._isLeavingReaderableReaderMode;
         ReaderParent.updateReaderButton(browser);
-        if (this._isLeavingReaderableReaderMode) {
-          this._isLeavingReaderableReaderMode = false;
+        if (browser._isLeavingReaderableReaderMode) {
+          browser._isLeavingReaderableReaderMode = false;
         }
         break;
 
@@ -125,11 +127,11 @@ var AboutReaderListener = {
         // If a page is loaded from the bfcache, we won't get a "DOMContentLoaded"
         // event, so we need to rely on "pageshow" in this case.
         if (aEvent.persisted) {
-          this.updateReaderButton();
+          this.updateReaderButton(browser);
         }
         break;
       case "DOMContentLoaded":
-        this.updateReaderButton();
+        this.updateReaderButton(browser);
         break;
 
     }
@@ -141,34 +143,34 @@ var AboutReaderListener = {
    * this is a suitable document). Calling it on things which won't be
    * painted is not going to work.
    */
-  updateReaderButton(forceNonArticle) {
-    if (!ReaderMode.isEnabledForParseOnLoad || this.isAboutReader ||
-        !content || !(content.document instanceof content.HTMLDocument) ||
-        content.document.mozSyntheticDocument) {
+  updateReaderButton(browser, forceNonArticle) {
+    if (!ReaderMode.isEnabledForParseOnLoad || this.isAboutReader(browser) ||
+        !browser.contentWindow || !(browser.contentWindow.document instanceof browser.contentWindow.HTMLDocument) ||
+        browser.contentWindow.document.mozSyntheticDocument) {
       return;
     }
 
-    this.scheduleReadabilityCheckPostPaint(forceNonArticle);
+    this.scheduleReadabilityCheckPostPaint(browser, forceNonArticle);
   },
 
-  cancelPotentialPendingReadabilityCheck() {
-    if (this._pendingReadabilityCheck) {
-      gBrowser.removeEventListener("MozAfterPaint", this._pendingReadabilityCheck);
-      delete this._pendingReadabilityCheck;
+  cancelPotentialPendingReadabilityCheck(browser) {
+    if (browser._pendingReadabilityCheck) {
+      browser.removeEventListener("MozAfterPaint", browser._pendingReadabilityCheck);
+      delete browser._pendingReadabilityCheck;
     }
   },
 
-  scheduleReadabilityCheckPostPaint(forceNonArticle) {
-    if (this._pendingReadabilityCheck) {
+  scheduleReadabilityCheckPostPaint(browser, forceNonArticle) {
+    if (browser._pendingReadabilityCheck) {
       // We need to stop this check before we re-add one because we don't know
       // if forceNonArticle was true or false last time.
-      this.cancelPotentialPendingReadabilityCheck();
+      this.cancelPotentialPendingReadabilityCheck(browser);
     }
-    this._pendingReadabilityCheck = this.onPaintWhenWaitedFor.bind(this, forceNonArticle);
-    gBrowser.addEventListener("MozAfterPaint", this._pendingReadabilityCheck);
+    browser._pendingReadabilityCheck = this.onPaintWhenWaitedFor.bind(this, browser, forceNonArticle);
+    browser.addEventListener("MozAfterPaint", browser._pendingReadabilityCheck);
   },
 
-  onPaintWhenWaitedFor(forceNonArticle, event) {
+  onPaintWhenWaitedFor(browser, forceNonArticle, event) {
     // In non-e10s, we'll get called for paints other than ours, and so it's
     // possible that this page hasn't been laid out yet, in which case we
     // should wait until we get an event that does relate to our layout. We
@@ -178,18 +180,15 @@ var AboutReaderListener = {
       return;
     }
 
-    this.cancelPotentialPendingReadabilityCheck();
+    this.cancelPotentialPendingReadabilityCheck(browser);
     // Only send updates when there are articles; there's no point updating with
     // |false| all the time.
-    if (ReaderMode.isProbablyReaderable(content.document)) {
-      var browser = gBrowser.selectedBrowser;
+    if (ReaderMode.isProbablyReaderable(browser.contentWindow.document)) {
       browser.isArticle = true;
-      ReaderParent.updateReaderButton(browser);
     } else if (forceNonArticle) {
-      var browser = gBrowser.selectedBrowser;
       browser.isArticle = false;
-      ReaderParent.updateReaderButton(browser);
     }
+    ReaderParent.updateReaderButton(browser);
   }
 };
 
