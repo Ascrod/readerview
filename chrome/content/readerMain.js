@@ -68,7 +68,7 @@ var AboutReaderListener = {
   },
 
   //Updates the reader button after customization.
-  onCustomizeEnd(event) {
+  onCustomizeEnd(aEvent) {
     ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
   },
 
@@ -132,7 +132,7 @@ var AboutReaderListener = {
           // Update the toolbar icon to show the "reader active" icon.
           ReaderParent.updateReaderButton(browser);
           new AboutReader(browser.contentWindow, browser._articlePromise);
-          browser._articlePromise = null;
+          delete browser._articlePromise;
         }
         break;
 
@@ -158,14 +158,10 @@ var AboutReaderListener = {
         // browser._isLeavingReaderableReaderMode is used here to keep the Reader Mode icon
         // visible in the location bar when transitioning from reader-mode page
         // back to the readable source page.
-        if (browser._isLeavingReaderableReaderMode === undefined)
-        {
-          browser._isLeavingReaderableReaderMode = false;
-        }
         browser.isArticle = browser._isLeavingReaderableReaderMode;
         ReaderParent.updateReaderButton(browser);
         if (browser._isLeavingReaderableReaderMode) {
-          browser._isLeavingReaderableReaderMode = false;
+          delete browser._isLeavingReaderableReaderMode;
         }
         break;
 
@@ -179,7 +175,6 @@ var AboutReaderListener = {
       case "DOMContentLoaded":
         this.updateReaderButton(browser);
         break;
-
     }
   },
 
