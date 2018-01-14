@@ -145,7 +145,6 @@ var AboutReaderListener = {
           return;
         }
 
-        console.log(browser._scrollData);
         var scrollData = browser._scrollData;
         scrollData = scrollData.split(",");
         scrollData = [parseInt(scrollData[0]) || 0, parseInt(scrollData[1]) || 0];
