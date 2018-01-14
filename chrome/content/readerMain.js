@@ -17,12 +17,14 @@ var AboutReaderListener = {
   init() {
     setTimeout(this.checkInstall, 5);
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
+    gBrowser.addEventListener("AboutReaderContentReady", this, false, true);
     gBrowser.addEventListener("DOMContentLoaded", this, false);
     gBrowser.addEventListener("pageshow", this, false);
     gBrowser.addEventListener("pagehide", this, false);
     gBrowser.addProgressListener(this.browserWindowListener);
     gBrowser.addTabsProgressListener(this.tabsProgressListener);
     window.addEventListener("aftercustomization", this.onCustomizeEnd, false);
+    window.addEventListener("SSTabRestored", this.onTabRestored, false);
   },
 
   //Adds the reader button to the urlbar on first run.
@@ -70,6 +72,27 @@ var AboutReaderListener = {
     ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
   },
 
+  //Begins restoring the scroll position after tab restore
+  onTabRestored(aEvent) {
+    var tab = aEvent.originalTarget;
+    var browser = aEvent.originalTarget.linkedBrowser;
+    if (!browser) {
+      return;
+    }
+
+    if (!this.AboutReaderListener.isAboutReader(browser)) {
+      return;
+    }
+
+    // Don't restore the scroll position of an about:reader page at this
+    // point; listen for the custom event dispatched from AboutReader.jsm.
+    var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+    var tabData = ss.getTabState(tab);
+    tabData = JSON.parse(tabData);
+    var scrollData = tabData.entries[0].scroll;
+    browser._scrollData = scrollData;
+  },
+
   toggleReaderMode() {
     var browser = gBrowser.selectedBrowser;
     if (!this.isAboutReader(browser)) {
@@ -111,6 +134,23 @@ var AboutReaderListener = {
           new AboutReader(browser.contentWindow, browser._articlePromise);
           browser._articlePromise = null;
         }
+        break;
+
+      case "AboutReaderContentReady":
+        if (!this.isAboutReader(browser)) {
+          return;
+        }
+
+        if (!browser._scrollData) {
+          return;
+        }
+
+        console.log(browser._scrollData);
+        var scrollData = browser._scrollData;
+        scrollData = scrollData.split(",");
+        scrollData = [parseInt(scrollData[0]) || 0, parseInt(scrollData[1]) || 0];
+        browser.contentWindow.scrollTo(scrollData[0], scrollData[1]);
+        delete browser._scrollData;
         break;
 
       case "pagehide":
