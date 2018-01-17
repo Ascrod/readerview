@@ -61,7 +61,7 @@ var AboutReaderListener = {
       if (aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) {
         // Reader mode actually cares about these:
         var browser = gBrowser.selectedBrowser;
-        this.updateReaderButton(browser, browser.isArticle);
+        AboutReaderListener.updateReaderButton(browser, browser.isArticle);
         return;
       }
     }
