@@ -40,9 +40,6 @@ var AboutReader = function(win, articlePromise) {
     .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID;
 
   this._article = null;
-  this._languagePromise = new Promise(resolve => {
-    this._foundLanguage = resolve;
-  });
 
   if (articlePromise) {
     this._articlePromise = articlePromise;
@@ -113,10 +110,6 @@ var AboutReader = function(win, articlePromise) {
   this._setupContentWidthButtons();
 
   this._setupLineHeightButtons();
-
-//  if (win.speechSynthesis && Services.prefs.getBoolPref("narrate.enabled")) {
-//    new NarrateControls(mm, win, this._languagePromise);
-//  }
 
   this._loadArticle();
 };
@@ -716,19 +709,6 @@ AboutReader.prototype = {
     }
   },
 
-  _maybeSetTextDirection: function Read_maybeSetTextDirection(article) {
-    if (article.dir) {
-      // Set "dir" attribute on content
-      this._contentElement.setAttribute("dir", article.dir);
-      this._headerElement.setAttribute("dir", article.dir);
-
-      // The native locale could be set differently than the article's text direction.
-      var localeDirection = Services.locale.isAppLocaleRTL ? "rtl" : "ltr";
-      this._readTimeElement.setAttribute("dir", localeDirection);
-      this._readTimeElement.style.textAlign = article.dir == "rtl" ? "right" : "left";
-    }
-  },
-
   _formatReadTime(slowEstimate, fastEstimate) {
     let displayStringKey = "aboutReader.estimatedReadTimeRange1";
 
@@ -799,8 +779,6 @@ AboutReader.prototype = {
       false, articleUri, this._contentElement);
     this._contentElement.innerHTML = "";
     this._contentElement.appendChild(contentFragment);
-    this._maybeSetTextDirection(article);
-    this._foundLanguage(article.language);
 
     this._contentElement.style.display = "block";
     this._updateImageMargins();

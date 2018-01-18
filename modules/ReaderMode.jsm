@@ -487,8 +487,7 @@ this.ReaderMode = {
     let flags = Ci.nsIDocumentEncoder.OutputSelectionOnly | Ci.nsIDocumentEncoder.OutputAbsoluteLinks;
     article.title = Cc["@mozilla.org/parserutils;1"].getService(Ci.nsIParserUtils)
                                                     .convertToPlainText(article.title, flags, 0);
-//    yield this._assignLanguage(article);
-    this._maybeAssignTextDirection(article);
+    article.language = "en";
 
     this._assignReadTime(article);
 
@@ -539,25 +538,6 @@ this.ReaderMode = {
       }
       return undefined;
     });
-  },
-
-  /**
-   * Sets a global language string value if the result is confident
-   *
-   * @return Promise
-   * @resolves when the language is detected
-   */
-  _assignLanguage(article) {
-    return LanguageDetector.detectLanguage(article.textContent).then(result => {
-      article.language = result.confident ? result.language : null;
-    });
-  },
-
-  _maybeAssignTextDirection(article) {
-    // TODO: Remove the hardcoded language codes below once bug 1320265 is resolved.
-    if (!article.dir && ["ar", "fa", "he", "ug", "ur"].includes(article.language)) {
-      article.dir = "rtl";
-    }
   },
 
   /**
