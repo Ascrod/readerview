@@ -11,3 +11,4 @@ pref("extensions.reader.parse-node-limit", 0);
 pref("extensions.reader.parse-on-load.enabled", true);
 pref("extensions.reader.parse-on-load.force-enabled", false);
 pref("extensions.reader.toolbar.vertical", true);
+pref("extensions.reader.location.urlbar", false);

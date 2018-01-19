@@ -45,10 +45,30 @@ var AboutReaderListener = {
     }
   },
 
+  //Get preference value for showing the reader button
+  get showInUrlbar() {
+    delete this.uiPref;
+
+    Services.prefs.addObserver("extensions.reader.location.urlbar", this.UIPrefObserver, false);
+    return this.uiPref = Services.prefs.getBoolPref("extensions.reader.location.urlbar");
+  },
+
+  //Observe UI preference value change
+  UIPrefObserver: {
+    observe(aMessage, aTopic, aData) {
+      if (aTopic != "nsPref:changed" || aData != "extensions.reader.location.urlbar") {
+        return;
+      }
+
+      console.log(this);
+      ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.showInUrlbar);
+    }
+  },
+
   //Updates the reader button on change of the URL.
   browserWindowListener: {
     onLocationChange(aWebProgress, aRequest, aLocationURI, aFlags) {
-      ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
+      ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.showInUrlbar);
     }
   },
 
@@ -69,7 +89,7 @@ var AboutReaderListener = {
 
   //Updates the reader button after customization.
   onCustomizeEnd(aEvent) {
-    ReaderParent.updateReaderButton(gBrowser.selectedBrowser);
+    ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.showInUrlbar);
   },
 
   //Begins restoring the scroll position after tab restore
@@ -130,7 +150,7 @@ var AboutReaderListener = {
 
         if (browser.contentWindow.document.body) {
           // Update the toolbar icon to show the "reader active" icon.
-          ReaderParent.updateReaderButton(browser);
+          ReaderParent.updateReaderButton(browser, this.showInUrlbar);
           new AboutReader(browser.contentWindow, browser._articlePromise);
           delete browser._articlePromise;
         }
@@ -158,7 +178,7 @@ var AboutReaderListener = {
         // visible in the location bar when transitioning from reader-mode page
         // back to the readable source page.
         browser.isArticle = browser._isLeavingReaderableReaderMode;
-        ReaderParent.updateReaderButton(browser);
+        ReaderParent.updateReaderButton(browser, this.showInUrlbar);
         if (browser._isLeavingReaderableReaderMode) {
           delete browser._isLeavingReaderableReaderMode;
         }
@@ -228,7 +248,7 @@ var AboutReaderListener = {
     } else if (forceNonArticle) {
       browser.isArticle = false;
     }
-    ReaderParent.updateReaderButton(browser);
+    ReaderParent.updateReaderButton(browser, this.showInUrlbar);
   }
 };
 

@@ -12,6 +12,21 @@
             oncommand="ReaderParent.buttonClick(event);"
         />
     </toolbarpalette>
+
+    <toolbar id="nav-bar">
+      <toolbaritem id="urlbar-container">
+        <textbox id="urlbar">
+          <hbox id="urlbar-icons">
+            <image id="reader-mode-button-fixed"
+              position="1"
+              class="urlbar-icon"
+              hidden="true"
+              onclick="ReaderParent.buttonClick(event);"
+            />
+          </hbox>
+        </textbox>
+      </toolbaritem>
+    </toolbar>
     
     <commandset id="mainCommandSet">
         <command id="View:ReaderView"

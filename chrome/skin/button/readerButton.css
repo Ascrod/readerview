@@ -15,3 +15,18 @@
   -moz-image-region: rect(0, 48px, 16px, 32px);
 }
 
+#reader-mode-button-fixed {
+  list-style-image: url("chrome://readerview/skin/button/readerMode.svg");
+  -moz-image-region: rect(0, 16px, 16px, 0);
+}
+
+#reader-mode-button-fixed:hover,
+#reader-mode-button-fixed[state="enabled"]:hover {
+  -moz-image-region: rect(0, 32px, 16px, 16px);
+}
+
+#reader-mode-button-fixed:hover:active,
+#reader-mode-button-fixed[state="active"] {
+  -moz-image-region: rect(0, 48px, 16px, 32px);
+}
+

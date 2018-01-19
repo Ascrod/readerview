@@ -18,21 +18,27 @@ XPCOMUtils.defineLazyModuleGetter(this, "ReaderMode", "resource://readerview/Rea
 const gStringBundle = Services.strings.createBundle("chrome://readerview/locale/aboutReader.properties");
 
 var ReaderParent = {
-  updateReaderButton: function(browser) {
+  updateReaderButton: function(browser, showInUrlbar) {
     let win = browser.ownerGlobal;
     if (browser != win.gBrowser.selectedBrowser) {
       return;
     }
 
-    let button = win.document.getElementById("reader-mode-button");
+    let buttonFloat = win.document.getElementById("reader-mode-button");
+    let buttonFixed = win.document.getElementById("reader-mode-button-fixed");
     let command = win.document.getElementById("View:ReaderView");
     let key = win.document.getElementById("key_toggleReaderMode");
     if (browser.currentURI.spec.startsWith("about:reader")) {
       let closeText = gStringBundle.GetStringFromName("readerView.close");
-      if (button) {
-        button.setAttribute("state", "active");
-        button.disabled = false;
-        button.setAttribute("tooltiptext", closeText);
+      if (buttonFloat) {
+        buttonFloat.setAttribute("state", "active");
+        buttonFloat.disabled = false;
+        buttonFloat.setAttribute("tooltiptext", closeText);
+        buttonFloat.hidden = showInUrlbar;
+      } if (buttonFixed) {
+        buttonFixed.setAttribute("state", "active");
+        buttonFixed.hidden = !showInUrlbar;
+        buttonFixed.setAttribute("tooltiptext", closeText);
       }
       command.setAttribute("label", closeText);
       command.setAttribute("hidden", false);
@@ -40,10 +46,15 @@ var ReaderParent = {
       key.setAttribute("disabled", false);
     } else {
       let enterText = gStringBundle.GetStringFromName((browser.isArticle ? "readerView.enter" : "readerView.disabled"));
-      if (button) {
-        button.setAttribute("state", (browser.isArticle ? "enabled" : "disabled"));
-        button.disabled = !browser.isArticle;
-        button.setAttribute("tooltiptext", enterText);
+      if (buttonFloat) {
+        buttonFloat.setAttribute("state", (browser.isArticle ? "enabled" : "disabled"));
+        buttonFloat.disabled = !browser.isArticle;
+        buttonFloat.setAttribute("tooltiptext", enterText);
+        buttonFloat.hidden = showInUrlbar;
+      } if (buttonFixed) {
+        buttonFixed.setAttribute("state", (browser.isArticle ? "enabled" : "disabled"));
+        buttonFixed.hidden = !(showInUrlbar && browser.isArticle);
+        buttonFixed.setAttribute("tooltiptext", enterText);
       }
       command.setAttribute("label", enterText);
       command.setAttribute("hidden", !browser.isArticle);
