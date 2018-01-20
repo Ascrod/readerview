@@ -157,11 +157,7 @@ var AboutReaderListener = {
         break;
 
       case "AboutReaderContentReady":
-        if (!this.isAboutReader(browser)) {
-          return;
-        }
-
-        if (!browser._scrollData) {
+        if (!this.isAboutReader(browser) || !browser._scrollData) {
           return;
         }
 
@@ -177,7 +173,7 @@ var AboutReaderListener = {
         // browser._isLeavingReaderableReaderMode is used here to keep the Reader Mode icon
         // visible in the location bar when transitioning from reader-mode page
         // back to the readable source page.
-        browser.isArticle = browser._isLeavingReaderableReaderMode;
+        browser.isArticle = (browser._isLeavingReaderableReaderMode || false);
         ReaderParent.updateReaderButton(browser, this.showInUrlbar);
         if (browser._isLeavingReaderableReaderMode) {
           delete browser._isLeavingReaderableReaderMode;
