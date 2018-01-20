@@ -45,6 +45,7 @@ locale          readerview      fr              chrome/locale/fr/
 #locale          readerview      fy-NL           chrome/locale/fy-NL/
 #locale          readerview      ga-IE           chrome/locale/ga-IE/
 #locale          readerview      gd              chrome/locale/gd/
+#locale          readerview      gl              chrome/locale/gl/
 #locale          readerview      gn              chrome/locale/gn/
 #locale          readerview      gu-IN           chrome/locale/gu-IN/
 #locale          readerview      he              chrome/locale/he/
@@ -88,6 +89,7 @@ locale          readerview      nl              chrome/locale/nl/
 #locale          readerview      nso             chrome/locale/nso/
 #locale          readerview      oc              chrome/locale/oc/
 #locale          readerview      or              chrome/locale/or/
+#locale          readerview      pa-IN           chrome/locale/pa-IN/
 #locale          readerview      pbb             chrome/locale/pbb/
 locale          readerview      pl              chrome/locale/pl/
 locale          readerview      pt-BR           chrome/locale/pt-BR/
@@ -109,6 +111,7 @@ locale          readerview      ru              chrome/locale/ru/
 locale          readerview      sv-SE           chrome/locale/sv-SE/
 #locale          readerview      sw              chrome/locale/sw/
 #locale          readerview      ta              chrome/locale/ta/
+#locale          readerview      ta-LK           chrome/locale/ta-LK/
 #locale          readerview      te              chrome/locale/te/
 #locale          readerview      th              chrome/locale/th/
 locale          readerview      tl              chrome/locale/tl/
