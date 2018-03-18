@@ -18,7 +18,7 @@ XPCOMUtils.defineLazyModuleGetter(this, "ReaderMode", "resource://readerview/Rea
 const gStringBundle = Services.strings.createBundle("chrome://readerview/locale/aboutReader.properties");
 
 var ReaderParent = {
-  updateReaderButton: function(browser, showInUrlbar) {
+  updateReaderButton: function(browser, UIPrefs) {
     let win = browser.ownerGlobal;
     if (browser != win.gBrowser.selectedBrowser) {
       return;
@@ -26,40 +26,47 @@ var ReaderParent = {
 
     let buttonFloat = win.document.getElementById("reader-mode-button");
     let buttonFixed = win.document.getElementById("reader-mode-button-fixed");
+    let menuItem = win.document.getElementById("menu_readerModeItem");
     let command = win.document.getElementById("View:ReaderView");
     let key = win.document.getElementById("key_toggleReaderMode");
+    if (UIPrefs.hotkeyEnabled)
+        menuItem.setAttribute("key", "key_toggleReaderMode");
+    else
+        menuItem.removeAttribute("key");
+        menuItem.removeAttribute("acceltext");
+
     if (browser.currentURI.spec.startsWith("about:reader")) {
       let closeText = gStringBundle.GetStringFromName("readerView.close");
       if (buttonFloat) {
         buttonFloat.setAttribute("state", "active");
         buttonFloat.disabled = false;
         buttonFloat.setAttribute("tooltiptext", closeText);
-        buttonFloat.hidden = showInUrlbar;
+        buttonFloat.hidden = UIPrefs.showInUrlbar;
       } if (buttonFixed) {
         buttonFixed.setAttribute("state", "active");
-        buttonFixed.hidden = !showInUrlbar;
+        buttonFixed.hidden = !UIPrefs.showInUrlbar;
         buttonFixed.setAttribute("tooltiptext", closeText);
       }
       command.setAttribute("label", closeText);
       command.setAttribute("hidden", false);
       command.setAttribute("accesskey", gStringBundle.GetStringFromName("readerView.close.accesskey"));
-      key.setAttribute("disabled", false);
+      key.setAttribute("disabled", !UIPrefs.hotkeyEnabled);
     } else {
       let enterText = gStringBundle.GetStringFromName((browser.isArticle ? "readerView.enter" : "readerView.disabled"));
       if (buttonFloat) {
         buttonFloat.setAttribute("state", (browser.isArticle ? "enabled" : "disabled"));
         buttonFloat.disabled = !browser.isArticle;
         buttonFloat.setAttribute("tooltiptext", enterText);
-        buttonFloat.hidden = showInUrlbar;
+        buttonFloat.hidden = UIPrefs.showInUrlbar;
       } if (buttonFixed) {
         buttonFixed.setAttribute("state", (browser.isArticle ? "enabled" : "disabled"));
-        buttonFixed.hidden = !(showInUrlbar && browser.isArticle);
+        buttonFixed.hidden = !(UIPrefs.showInUrlbar && browser.isArticle);
         buttonFixed.setAttribute("tooltiptext", enterText);
       }
       command.setAttribute("label", enterText);
       command.setAttribute("hidden", !browser.isArticle);
       command.setAttribute("accesskey", gStringBundle.GetStringFromName("readerView.enter.accesskey"));
-      key.setAttribute("disabled", !browser.isArticle);
+      key.setAttribute("disabled", !(browser.isArticle && UIPrefs.hotkeyEnabled));
     }
   },
 

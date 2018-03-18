@@ -12,3 +12,4 @@ pref("extensions.reader.parse-on-load.enabled", true);
 pref("extensions.reader.parse-on-load.force-enabled", false);
 pref("extensions.reader.toolbar.vertical", true);
 pref("extensions.reader.location.urlbar", false);
+pref("extensions.reader.hotkey.enabled", true);

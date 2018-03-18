@@ -45,30 +45,39 @@ var AboutReaderListener = {
     }
   },
 
-  //Get preference value for showing the reader button
-  get showInUrlbar() {
-    delete this.uiPref;
+  //Get overlay preferences
+  get UIPrefs() {
+    delete this.uiPrefs;
 
     Services.prefs.addObserver("extensions.reader.location.urlbar", this.UIPrefObserver, false);
-    return this.uiPref = Services.prefs.getBoolPref("extensions.reader.location.urlbar");
+    Services.prefs.addObserver("extensions.reader.hotkey.enabled", this.UIPrefObserver, false);
+
+    var location_pref = Services.prefs.getBoolPref("extensions.reader.location.urlbar");
+    var hotkey_pref = Services.prefs.getBoolPref("extensions.reader.hotkey.enabled");
+
+    this.uiPrefs = {
+      showInUrlbar: location_pref,
+      hotkeyEnabled: hotkey_pref
+    }
+
+    return this.uiPrefs;
   },
 
   //Observe UI preference value change
   UIPrefObserver: {
     observe(aMessage, aTopic, aData) {
-      if (aTopic != "nsPref:changed" || aData != "extensions.reader.location.urlbar") {
+      if (aTopic != "nsPref:changed") {
         return;
       }
-
-      console.log(this);
-      ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.showInUrlbar);
+      if (aData == "extensions.reader.location.urlbar" || aData == "extensions.reader.hotkey.enabled")
+        ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.UIPrefs);
     }
   },
 
   //Updates the reader button on change of the URL.
   browserWindowListener: {
     onLocationChange(aWebProgress, aRequest, aLocationURI, aFlags) {
-      ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.showInUrlbar);
+      ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.UIPrefs);
     }
   },
 
@@ -89,7 +98,7 @@ var AboutReaderListener = {
 
   //Updates the reader button after customization.
   onCustomizeEnd(aEvent) {
-    ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.showInUrlbar);
+    ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.UIPrefs);
   },
 
   //Begins restoring the scroll position after tab restore
@@ -150,7 +159,7 @@ var AboutReaderListener = {
 
         if (browser.contentWindow.document.body) {
           // Update the toolbar icon to show the "reader active" icon.
-          ReaderParent.updateReaderButton(browser, this.showInUrlbar);
+          ReaderParent.updateReaderButton(browser, this.UIPrefs);
           new AboutReader(browser.contentWindow, browser._articlePromise);
           delete browser._articlePromise;
         }
@@ -174,7 +183,7 @@ var AboutReaderListener = {
         // visible in the location bar when transitioning from reader-mode page
         // back to the readable source page.
         browser.isArticle = (browser._isLeavingReaderableReaderMode || false);
-        ReaderParent.updateReaderButton(browser, this.showInUrlbar);
+        ReaderParent.updateReaderButton(browser, this.UIPrefs);
         if (browser._isLeavingReaderableReaderMode) {
           delete browser._isLeavingReaderableReaderMode;
         }
@@ -244,7 +253,7 @@ var AboutReaderListener = {
     } else if (forceNonArticle) {
       browser.isArticle = false;
     }
-    ReaderParent.updateReaderButton(browser, this.showInUrlbar);
+    ReaderParent.updateReaderButton(browser, this.UIPrefs);
   }
 };
 
