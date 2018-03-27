@@ -7,6 +7,7 @@ pref("extensions.reader.font_size", 5);
 pref("extensions.reader.font_type", "sans-serif");
 pref("extensions.reader.has_used_toolbar", false);
 pref("extensions.reader.line_height", 4);
+pref("extensions.reader.show_images", true);
 pref("extensions.reader.parse-node-limit", 0);
 pref("extensions.reader.parse-on-load.enabled", true);
 pref("extensions.reader.parse-on-load.force-enabled", false);

@@ -111,6 +111,8 @@ var AboutReader = function(win, articlePromise) {
 
   this._setupLineHeightButtons();
 
+  this._setupImageButton();
+
   this._loadArticle();
 };
 
@@ -338,6 +340,35 @@ AboutReader.prototype = {
     }, true);
   },
 
+  _setupImageButton() {
+    let showImages = Services.prefs.getBoolPref("extensions.reader.show_images");
+
+    let imageButton = this._doc.querySelector(".images-button");
+
+    function updateImageButton() {
+      if (showImages) {
+        imageButton.setAttribute("state", "enabled");
+        imageButton.setAttribute("title", gStrings.GetStringFromName("aboutReader.toolbar.hideImages"));
+      } else {
+        imageButton.setAttribute("state", "disabled");
+        imageButton.setAttribute("title", gStrings.GetStringFromName("aboutReader.toolbar.showImages"));
+      }
+    }
+
+    updateImageButton();
+
+    imageButton.addEventListener("click", (event) => {
+      if (!event.isTrusted) {
+        return;
+      }
+      event.stopPropagation();
+
+      showImages = !showImages;
+      updateImageButton();
+      this._setImageVisibility(showImages);
+    }, true);
+  },
+
   _setContentWidth(newContentWidth) {
     let containerClasses = this._containerElement.classList;
 
@@ -472,6 +503,19 @@ AboutReader.prototype = {
       updateControls();
       this._setLineHeight(currentLineHeight);
     }, true);
+  },
+
+  _setImageVisibility(showImages) {
+    let imgs = this._doc.querySelectorAll("img");
+    for (let i = 0; i < imgs.length; i++) {
+      let img = imgs[i];
+
+      if (showImages)
+        img.style.display = "";
+      else
+        img.style.display = "none";
+    }
+    Services.prefs.setBoolPref("extensions.reader.show_images", showImages);
   },
 
   _handleDeviceLight(newLux) {
@@ -782,6 +826,8 @@ AboutReader.prototype = {
 
     this._contentElement.style.display = "block";
     this._updateImageMargins();
+
+    this._setImageVisibility(Services.prefs.getBoolPref("extensions.reader.show_images"));
 
     this._requestFavicon();
     this._doc.body.classList.add("loaded");

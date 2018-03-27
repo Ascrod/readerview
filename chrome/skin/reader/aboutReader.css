@@ -514,6 +514,14 @@ body:not(.loaded) .toolbar:-moz-locale-dir(rtl) {
   background-image: url("chrome://readerview/skin/reader/RM-Line-Height-Plus-38x24.svg");
 }
 
+.images-button[state="disabled"] {
+  background-image: url("chrome://readerview/skin/reader/RM-Image-Hide-24x24.svg");
+}
+
+.images-button[state="enabled"] {
+  background-image: url("chrome://readerview/skin/reader/RM-Image-Show-24x24.svg");
+}
+
 @media print {
   .toolbar {
     display: none !important;
