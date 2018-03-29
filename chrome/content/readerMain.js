@@ -15,7 +15,7 @@ XPCOMUtils.defineLazyModuleGetter(this, "AboutReader", "resource://readerview/Ab
 var AboutReaderListener = {
 
   init() {
-    setTimeout(this.checkInstall, 5);
+    this.checkInstall();
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
     gBrowser.addEventListener("AboutReaderContentReady", this, false, true);
     gBrowser.addEventListener("DOMContentLoaded", this, false);
@@ -89,8 +89,7 @@ var AboutReaderListener = {
       // or history.push/pop/replaceState.
       if (aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) {
         // Reader mode actually cares about these:
-        var browser = gBrowser.selectedBrowser;
-        AboutReaderListener.updateReaderButton(browser, browser.isArticle);
+        AboutReaderListener.updateReaderButton(aBrowser, aBrowser.isArticle);
         return;
       }
     }
@@ -258,6 +257,6 @@ var AboutReaderListener = {
 };
 
 //Do initialization only once window has fully loaded
-window.addEventListener("load", function () {
+Services.obs.addObserver(function() {
   AboutReaderListener.init();
-}, false);
+}, "browser-delayed-startup-finished", false);
