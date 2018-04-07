@@ -454,6 +454,11 @@ this.ReaderMode = {
       pathBase: Services.io.newURI(".", null, doc.baseURIObject).spec
     };
 
+    let langAttributes = {
+      charset: doc.characterSet,
+      lang: doc.documentElement.lang
+    };
+
     let serializer = Cc["@mozilla.org/xmlextras/xmlserializer;1"].
                      createInstance(Ci.nsIDOMSerializer);
     let serializedDoc = serializer.serializeToString(doc);
@@ -487,7 +492,8 @@ this.ReaderMode = {
     let flags = Ci.nsIDocumentEncoder.OutputSelectionOnly | Ci.nsIDocumentEncoder.OutputAbsoluteLinks;
     article.title = Cc["@mozilla.org/parserutils;1"].getService(Ci.nsIParserUtils)
                                                     .convertToPlainText(article.title, flags, 0);
-    article.language = "en";
+    this._assignLanguage(article, langAttributes);
+    this._maybeAssignTextDirection(article);
 
     this._assignReadTime(article);
 
@@ -538,6 +544,37 @@ this.ReaderMode = {
       }
       return undefined;
     });
+  },
+
+  _assignLanguage(article, attributes) {
+    var lang = attributes.lang.substring(0,2);
+    if (lang) {
+      article.language = lang;
+      return;
+    }
+
+    // If there is no lang attribute, try the charset.
+    // We can only use this for charsets that are specific to one language.
+    const charsetLang = new Map([
+      [ "us-ascii",    "en" ],
+      [ "iso-8859-6",  "ar" ],
+      [ "iso-8859-7",  "el" ],
+      [ "iso-8859-8",  "he" ],
+      [ "iso-8859-9",  "tr" ],
+      [ "iso-8859-11", "th" ],
+      [ "jis_x0201",   "ja" ],
+      [ "shift_jis",   "ja" ],
+      [ "euc-jp",      "ja" ]
+    ]);
+
+    article.language = charsetLang.get(attributes.charset);
+  },
+
+  _maybeAssignTextDirection(article) {
+    // TODO: Remove the hardcoded language codes below once bug 1320265 is resolved.
+    if (!article.dir && ["ar", "fa", "he", "ug", "ur"].includes(article.language)) {
+      article.dir = "rtl";
+    }
   },
 
   /**
