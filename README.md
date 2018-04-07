@@ -8,8 +8,6 @@ This extension adds a button with the Reader Mode icon to the Pale Moon interfac
 
 Reader View may also be activated by selecting "Enter Reader View" from the View menu, or by using the keyboard shortcut Ctrl + Alt + R.
 
-If you prefer to see the Reader Mode button in the URL bar as it is in Firefox, you can set the `extensions.reader.location.urlbar` preference in `about:config` to `true`.
-
 Many features in Reader View are identical between Mozilla Firefox and this add-on, such as:
 
 * Parse and render a page cleanly and clutter-free
@@ -18,9 +16,14 @@ Many features in Reader View are identical between Mozilla Firefox and this add-
 * Increase or decrease the font size
 * Choose from light, dark, or sepia color schemes
 
-This add-on comes with a few differences, such as:
+The following features are exclusive to this add-on:
 
-* Reading time estimates are based on English only.
+* Images may be shown or hidden using a button on the toolbar.
+* The Reader button is now a movable toolbar button. (If you wish to see the Reader Mode button in the URL bar as it is in Firefox, you can set the `extensions.reader.location.urlbar` preference in `about:config` to `true`.)
+* The keyboard shortcut may be disabled by setting the `extensions.reader.hotkey.enabled` preference in `about:config` to `false`.
+
+Several features in the Firefox version are not included in this add-on:
+
 * Text to speech/narration is not available.
 * Pocket integration is not available.
 * Telemetry is not included.
