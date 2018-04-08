@@ -1,9 +1,18 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/css" href="chrome://global/skin/" ?>
 <?xml-stylesheet type="text/css" href="chrome://readerview/skin/button/readerButton.css" ?>
+
+<!DOCTYPE overlay [
+    <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
+    %browserDTD;
+    <!ENTITY % readerDTD SYSTEM "chrome://readerview/locale/readerMain.dtd">
+    %readerDTD;
+]>
+
 <overlay id="readerview-browser-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript" src="chrome://readerview/content/readerMain.js"/>
+    <script type="application/x-javascript" src="chrome://readerview/content/readerUtils.js"/>
 
     <toolbarpalette id="BrowserToolbarPalette">
         <toolbarbutton id="reader-mode-button"
@@ -50,5 +59,25 @@
             disabled="true"
         />
     </keyset>
+
+    <menupopup id="contentAreaContextMenu">
+        <menu id="context-readerView"
+            class="menu-iconic"
+            image="chrome://readerview/skin/icons/reader-gray.svg"
+            label="&reader.openLinkCmdInReader.label;"
+            insertbefore="context-sep-open"
+        >
+            <menupopup id="context-readerView-popup">
+                <menuitem id="context-readerView-tab"
+                    label="&openLinkCmdInTab.label;"
+                    oncommand="AboutReaderListener.openLink(gContextMenu.linkURL, true)"
+                />
+                <menuitem id="context-readerView-current"
+                    label="&openLinkCmdInCurrent.label;"
+                    oncommand="AboutReaderListener.openLink(gContextMenu.linkURL, false)"
+                />
+            </menupopup>
+        </menu>
+    </menupopup>
 
 </overlay>

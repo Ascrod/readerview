@@ -16,6 +16,7 @@ var AboutReaderListener = {
 
   init() {
     this.checkInstall();
+    this.initContextMenu();
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
     gBrowser.addEventListener("AboutReaderContentReady", this, false, true);
     gBrowser.addEventListener("DOMContentLoaded", this, false);
@@ -43,6 +44,15 @@ var AboutReaderListener = {
         document.persist(toolbar.id, "currentset");
       }
     }
+  },
+
+  initContextMenu() {
+    var contextMenu = document.getElementById("contentAreaContextMenu");
+    if (contextMenu)
+      contextMenu.addEventListener("popupshowing", function(event) {
+        var menuItem = document.getElementById("context-readerView");
+        menuItem.hidden = !gContextMenu.onLink;
+      }, false);
   },
 
   //Get overlay preferences
@@ -130,6 +140,10 @@ var AboutReaderListener = {
       browser._isLeavingReaderableReaderMode = this.isReaderableAboutReader(browser);
       ReaderMode.leaveReaderMode(browser.contentWindow.document.docShell, browser.contentWindow);
     }
+  },
+
+  openLink(url, newTab) {
+    openReaderLinkIn(url, newTab ? "tab" : "current", { relatedToCurrent: true });
   },
 
   isAboutReader(browser) {
@@ -253,6 +267,14 @@ var AboutReaderListener = {
       browser.isArticle = false;
     }
     ReaderParent.updateReaderButton(browser, this.UIPrefs);
+
+    //Automatically load reader view if requested to do so.
+    if (browser.autoLoadReader && browser.isArticle)
+    {
+        delete browser.autoLoadReader;
+        browser._articlePromise = ReaderMode.parseDocument(browser.contentWindow.document).catch(Cu.reportError);
+        ReaderMode.enterReaderMode(browser.contentWindow.document.docShell, browser.contentWindow);
+    }
   }
 };
 
