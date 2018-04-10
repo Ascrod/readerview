@@ -87,8 +87,9 @@ this.ReaderMode = {
    * if not, append the about:reader page in the history instead.
    */
   enterReaderMode(docShell, win) {
-    let url = win.document.location.href;
-    let readerURL = "about:reader?url=" + encodeURIComponent(url);
+    let anchor = win.document.location.hash;
+    let url = win.document.location.href.replace(anchor, "");
+    let readerURL = "about:reader?url=" + encodeURIComponent(url) + anchor;
     let webNav = docShell.QueryInterface(Ci.nsIWebNavigation);
     let sh = webNav.sessionHistory;
     if (webNav.canGoForward) {
@@ -444,7 +445,7 @@ this.ReaderMode = {
 
     // Fetch this here before we send `doc` off to the worker thread, as later on the
     // document might be nuked but we will still want the URI.
-    let {documentURI} = doc;
+    let documentURI = doc.baseURI;
 
     let uriParam = {
       spec: doc.baseURIObject.spec,
