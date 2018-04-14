@@ -221,6 +221,9 @@ AboutReader.prototype = {
         } else if (!target.closest(".dropdown-popup")) {
           this._closeDropdowns();
         }
+        if (target.tagName == "A" && !target.classList.contains("reader-domain")) {
+          this._linkClicked(aEvent);
+        }
         break;
       case "scroll":
         this._closeDropdowns(true);
@@ -1031,6 +1034,18 @@ AboutReader.prototype = {
     if (openDropdowns.length) {
 //TODO: Implement this
 //      document.dispatchEvent(new CustomEvent("ReaderDropdownClosed"));
+    }
+  },
+
+  /*
+   * Override link handling for same-page references so we don't exit Reader View.
+   */
+  _linkClicked(event) {
+    var originalUrl = Services.io.newURI(this._getOriginalUrl(), null, null);
+    var targetUrl = Services.io.newURI(event.target.href, null, null);
+    if (originalUrl.specIgnoringRef == targetUrl.specIgnoringRef) {
+      event.preventDefault();
+      this._goToReference(targetUrl.ref);
     }
   },
 
