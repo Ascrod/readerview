@@ -130,8 +130,6 @@ locale          readerview      zh-CN           chrome/locale/zh-CN/
 #locale          readerview      zh-TW           chrome/locale/zh-TW/
 #locale          readerview      zu              chrome/locale/zu/
 
-resource        readerview                      modules/
-
 overlay         chrome://browser/content/browser.xul            chrome://readerview/content/readerMain.xul
 style           chrome://global/content/customizeToolbar.xul    chrome://readerview/skin/button/readerButton.css
 

@@ -13,9 +13,10 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/Task.jsm");
 
-XPCOMUtils.defineLazyModuleGetter(this, "ReaderMode", "resource://readerview/ReaderMode.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "ReaderMode", "resource://gre/modules/ReaderMode.jsm");
 
-const gStringBundle = Services.strings.createBundle("chrome://readerview/locale/aboutReader.properties");
+const gGlobalStringBundle = Services.strings.createBundle("chrome://global/locale/aboutReader.properties");
+const gLocalStringBundle = Services.strings.createBundle("chrome://readerview/locale/aboutReader.properties");
 
 var ReaderParent = {
   updateReaderButton: function(browser, UIPrefs) {
@@ -36,7 +37,7 @@ var ReaderParent = {
         menuItem.removeAttribute("acceltext");
 
     if (browser.currentURI.spec.startsWith("about:reader")) {
-      let closeText = gStringBundle.GetStringFromName("readerView.close");
+      let closeText = gGlobalStringBundle.GetStringFromName("readerView.close");
       if (buttonFloat) {
         buttonFloat.setAttribute("state", "active");
         buttonFloat.disabled = false;
@@ -49,10 +50,13 @@ var ReaderParent = {
       }
       command.setAttribute("label", closeText);
       command.setAttribute("hidden", false);
-      command.setAttribute("accesskey", gStringBundle.GetStringFromName("readerView.close.accesskey"));
+      command.setAttribute("accesskey", gGlobalStringBundle.GetStringFromName("readerView.close.accesskey"));
       key.setAttribute("disabled", !UIPrefs.hotkeyEnabled);
     } else {
-      let enterText = gStringBundle.GetStringFromName((browser.isArticle ? "readerView.enter" : "readerView.disabled"));
+      let enterText = gGlobalStringBundle.GetStringFromName("readerView.enter");
+      if (!browser.isArticle) {
+        enterText = gLocalStringBundle.GetStringFromName("readerView.disabled");
+      }
       if (buttonFloat) {
         buttonFloat.setAttribute("state", (browser.isArticle ? "enabled" : "disabled"));
         buttonFloat.disabled = !browser.isArticle;
@@ -65,7 +69,7 @@ var ReaderParent = {
       }
       command.setAttribute("label", enterText);
       command.setAttribute("hidden", !browser.isArticle);
-      command.setAttribute("accesskey", gStringBundle.GetStringFromName("readerView.enter.accesskey"));
+      command.setAttribute("accesskey", gGlobalStringBundle.GetStringFromName("readerView.enter.accesskey"));
       key.setAttribute("disabled", !(browser.isArticle && UIPrefs.hotkeyEnabled));
     }
   },

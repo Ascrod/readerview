@@ -12,7 +12,7 @@ var factory;
 const ABOUTPAGE_DESCRIPTION = "about:reader";
 const ABOUTPAGE_ID = "c0bbcc77-8951-4c37-97a4-59e907358680";
 const ABOUTPAGE_WORD = "reader";
-const ABOUTPAGE_URI = "chrome://readerview/content/aboutReader.html";
+const ABOUTPAGE_URI = "chrome://global/content/reader/aboutReader.html";
 
 function AboutReader() { }
 
@@ -26,8 +26,9 @@ AboutReader.prototype = Object.freeze({
     return Ci.nsIAboutModule.ALLOW_SCRIPT;
   },
 
-  newChannel: function(aURI) {
-    let channel = Services.io.newChannel(ABOUTPAGE_URI, null, null);
+  newChannel: function(aURI, aLoadInfo) {
+    let uri = Services.io.newURI(ABOUTPAGE_URI, null, null);
+    let channel = Services.io.newChannelFromURIWithLoadInfo(uri, aLoadInfo);
     channel.originalURI = aURI;
     return channel;
   }
