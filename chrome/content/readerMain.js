@@ -141,11 +141,11 @@ var AboutReaderListener = {
   toggleReaderMode() {
     var browser = gBrowser.selectedBrowser;
     if (!this.isAboutReader(browser)) {
-      browser._articlePromise = ReaderMode.parseDocument(browser.contentWindow.document).catch(Cu.reportError);
-      ReaderMode.enterReaderMode(browser.contentWindow.document.docShell, browser.contentWindow);
+      browser._articlePromise = ReaderMode.parseDocument(browser.contentDocument).catch(Cu.reportError);
+      ReaderMode.enterReaderMode(browser.contentDocument.docShell, browser.contentWindow);
     } else {
       browser._isLeavingReaderableReaderMode = this.isReaderableAboutReader(browser);
-      ReaderMode.leaveReaderMode(browser.contentWindow.document.docShell, browser.contentWindow);
+      ReaderMode.leaveReaderMode(browser.contentDocument.docShell, browser.contentWindow);
     }
   },
 
@@ -157,12 +157,12 @@ var AboutReaderListener = {
     if (!browser.contentWindow) {
       return false;
     }
-    return browser.contentWindow.document.documentURI.startsWith("about:reader");
+    return browser.contentDocument.documentURI.startsWith("about:reader");
   },
 
   isReaderableAboutReader(browser) {
     return this.isAboutReader(browser) &&
-      !browser.contentWindow.document.documentElement.dataset.isError;
+      !browser.contentDocument.documentElement.dataset.isError;
   },
 
   handleEvent(aEvent) {
@@ -182,7 +182,7 @@ var AboutReaderListener = {
           return;
         }
 
-        if (browser.contentWindow.document.body) {
+        if (browser.contentDocument.body) {
           // Update the toolbar icon to show the "reader active" icon.
           ReaderParent.updateReaderButton(browser, this.UIPrefs);
           new AboutReader(browser.contentWindow, browser._articlePromise);
@@ -294,8 +294,8 @@ var AboutReaderListener = {
    */
   updateReaderButton(browser, forceNonArticle) {
     if (!ReaderMode.isEnabledForParseOnLoad || this.isAboutReader(browser) ||
-        !browser.contentWindow || !(browser.contentWindow.document instanceof browser.contentWindow.HTMLDocument) ||
-        browser.contentWindow.document.mozSyntheticDocument) {
+        !browser.contentWindow || !(browser.contentDocument instanceof browser.contentWindow.HTMLDocument) ||
+        browser.contentDocument.mozSyntheticDocument) {
       return;
     }
 
@@ -332,7 +332,7 @@ var AboutReaderListener = {
     this.cancelPotentialPendingReadabilityCheck(browser);
     // Only send updates when there are articles; there's no point updating with
     // |false| all the time.
-    if (ReaderMode.isProbablyReaderable(browser.contentWindow.document)) {
+    if (ReaderMode.isProbablyReaderable(browser.contentDocument)) {
       browser.isArticle = true;
     } else if (forceNonArticle) {
       browser.isArticle = false;
@@ -343,8 +343,8 @@ var AboutReaderListener = {
     if (browser.autoLoadReader && browser.isArticle)
     {
         delete browser.autoLoadReader;
-        browser._articlePromise = ReaderMode.parseDocument(browser.contentWindow.document).catch(Cu.reportError);
-        ReaderMode.enterReaderMode(browser.contentWindow.document.docShell, browser.contentWindow);
+        browser._articlePromise = ReaderMode.parseDocument(browser.contentDocument).catch(Cu.reportError);
+        ReaderMode.enterReaderMode(browser.contentDocument.docShell, browser.contentWindow);
     }
   }
 };
