@@ -12,18 +12,25 @@ XPCOMUtils.defineLazyModuleGetter(this, "ReaderParent", "chrome://readerview/con
 XPCOMUtils.defineLazyModuleGetter(this, "ReaderMode", "resource://gre/modules/ReaderMode.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "AboutReader", "resource://gre/modules/AboutReader.jsm");
 
+var gStrings = Services.strings.createBundle("chrome://readerview/locale/aboutReader.properties");
+
 var AboutReaderListener = {
 
   init() {
     this.checkInstall();
     this.initContextMenu();
+
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
     gBrowser.addEventListener("AboutReaderContentReady", this, false, true);
     gBrowser.addEventListener("DOMContentLoaded", this, false);
     gBrowser.addEventListener("pageshow", this, false);
     gBrowser.addEventListener("pagehide", this, false);
+    gBrowser.addEventListener("AboutReaderOnSetup", this, false, true);
+    gBrowser.addEventListener("AboutReaderButtonClicked-show-images-button", this, false, true);
+    gBrowser.addEventListener("AboutReaderButtonClicked-hide-images-button", this, false, true);
     gBrowser.addProgressListener(this.browserWindowListener);
     gBrowser.addTabsProgressListener(this.tabsProgressListener);
+
     window.addEventListener("aftercustomization", this.onCustomizeEnd, false);
     window.addEventListener("SSTabRestored", this.onTabRestored, false);
   },
@@ -165,6 +172,11 @@ var AboutReaderListener = {
     }
 
     switch (aEvent.type) {
+      case "AboutReaderOnSetup":
+        var showImages = Services.prefs.getBoolPref("extensions.reader.show_images");
+        this.setupImageButton(browser.contentWindow, showImages);
+        break;
+
       case "AboutReaderContentLoaded":
         if (!this.isAboutReader(browser)) {
           return;
@@ -179,15 +191,38 @@ var AboutReaderListener = {
         break;
 
       case "AboutReaderContentReady":
-        if (!this.isAboutReader(browser) || !browser._scrollData) {
+        if (!this.isAboutReader(browser)) {
           return;
         }
 
+        //Update image visibility
+        var showImages = Services.prefs.getBoolPref("extensions.reader.show_images");
+        this.setImageVisibility(browser.contentDocument, showImages);
+
+        if (!browser._scrollData) {
+          return;
+        }
+
+        //Restore scroll position from session data
         var scrollData = browser._scrollData;
         scrollData = scrollData.split(",");
         scrollData = [parseInt(scrollData[0]) || 0, parseInt(scrollData[1]) || 0];
         browser.contentWindow.scrollTo(scrollData[0], scrollData[1]);
         delete browser._scrollData;
+        break;
+
+      case "AboutReaderButtonClicked-show-images-button":
+          this.removeImageButton(browser.contentWindow, "show-images-button");
+          this.setupImageButton(browser.contentWindow, false);
+          this.setImageVisibility(browser.contentDocument, false);
+          Services.prefs.setBoolPref("extensions.reader.show_images", false);
+        break;
+
+      case "AboutReaderButtonClicked-hide-images-button":
+          this.removeImageButton(browser.contentWindow, "hide-images-button");
+          this.setupImageButton(browser.contentWindow, true);
+          this.setImageVisibility(browser.contentDocument, true);
+          Services.prefs.setBoolPref("extensions.reader.show_images", true);
         break;
 
       case "pagehide":
@@ -209,10 +244,46 @@ var AboutReaderListener = {
           this.updateReaderButton(browser);
         }
         break;
+
       case "DOMContentLoaded":
         this.updateReaderButton(browser);
         break;
     }
+  },
+
+  setupImageButton(win, showImages) {
+    if (showImages) {
+      var button = {
+        id: "show-images-button",
+        title: gStrings.GetStringFromName("aboutReader.toolbar.hideImages"),
+        image: "chrome://readerview/skin/reader/RM-Image-Show-24x24.svg"
+      };
+    } else {
+      var button = {
+        id: "hide-images-button",
+        title: gStrings.GetStringFromName("aboutReader.toolbar.showImages"),
+        image: "chrome://readerview/skin/reader/RM-Image-Hide-24x24.svg"
+      };
+    }
+    win.dispatchEvent(new CustomEvent("AboutReaderAddButton", { detail: button }));
+  },
+
+  removeImageButton(win, id) {
+    var data = { id: id };
+    win.dispatchEvent(new CustomEvent("AboutReaderRemoveButton", { detail: data }));
+  },
+
+  setImageVisibility(doc, showImages) {
+    let imgs = doc.querySelectorAll("img");
+    for (let i = 0; i < imgs.length; i++) {
+      let img = imgs[i];
+
+      if (showImages)
+        img.style.display = "";
+      else
+        img.style.display = "none";
+    }
+    Services.prefs.setBoolPref("extensions.reader.show_images", showImages);
   },
 
   /**
