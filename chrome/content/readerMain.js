@@ -134,7 +134,7 @@ var AboutReaderListener = {
     var ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
     var tabData = ss.getTabState(tab);
     tabData = JSON.parse(tabData);
-    var scrollData = tabData.entries[0].scroll;
+    var scrollData = tabData.entries[tabData.entries.length-1].scroll;
     browser._scrollData = scrollData;
   },
 
