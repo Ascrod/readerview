@@ -17,7 +17,8 @@ var gStrings = Services.strings.createBundle("chrome://readerview/locale/aboutRe
 var AboutReaderListener = {
 
   init() {
-    this.checkInstall();
+    this.checkFirstRun();
+    this.checkPrefs();
     this.initContextMenu();
 
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
@@ -36,7 +37,7 @@ var AboutReaderListener = {
   },
 
   //Adds the reader button to the urlbar on first run.
-  checkInstall() {
+  checkFirstRun() {
     var first_run = Services.prefs.getBoolPref("extensions.reader.first_run");
     if (first_run == true) {
       Services.prefs.setBoolPref("extensions.reader.first_run", false);
@@ -50,6 +51,47 @@ var AboutReaderListener = {
         toolbar.setAttribute("currentset", toolbar.currentSet);
         document.persist(toolbar.id, "currentset");
       }
+    }
+  },
+
+  //Check for any necessary preference migration.
+  checkPrefs() {
+    var pb_rv = Services.prefs.getBranch("extensions.reader.");
+
+    //Check if we need to migrate preference values from 1.x.
+    var test_type = pb_rv.getPrefType("toolbar.vertical");
+    if (test_type != pb_rv.PREF_INVALID) {
+      var pb_tk = Services.prefs.getBranch("reader.");
+      var prefs = [
+        "color_scheme",
+        "color_scheme.values",
+        "content_width",
+        "errors.includeURLs",
+        "font_size",
+        "font_type",
+        "has_used_toolbar",
+        "line_height",
+        "parse-node-limit",
+        "parse-on-load.enabled",
+        "parse-on-load.force-enabled",
+        "toolbar.vertical"
+      ];
+
+      prefs.forEach(function(pref) {
+        var type = pb_rv.getPrefType(pref);
+        switch (type) {
+          case Services.prefs.PREF_BOOL:
+            pb_tk.setBoolPref(pref, pb_rv.getBoolPref(pref));
+            break;
+          case Services.prefs.PREF_INT:
+            pb_tk.setIntPref(pref, pb_rv.getIntPref(pref));
+            break;
+          case Services.prefs.PREF_STRING:
+            pb_tk.setCharPref(pref, pb_rv.getCharPref(pref));
+            break;
+        }
+        pb_rv.clearUserPref(pref);
+      });
     }
   },
 
