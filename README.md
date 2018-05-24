@@ -34,13 +34,49 @@ https://addons.palemoon.org/addon/readerview/
 
 Happy reading!
 
-## License and Copyright
+## Developers
 
-Most of this code is licensed under Mozilla Public License 2.0, available at:
+To add your own button to the Reader toolbar, first listen for the `AboutReaderOnSetup` event on the DOM window, then dispatch an `AboutReaderAddButton` event on that DOM window. The event's detail object should contain three properties: the `id` to identify the button by, the `title` to display in the button's tooltip, and the `image` to be displayed on the button.
+```
+gBrowser.addEventListener("AboutReaderOnSetup", this, false, true);
+...
+handleEvent (aEvent) {
+  var browser = gBrowser.getBrowserForDocument(aEvent.target.defaultView.document);
+  switch (aEvent.type) {
+    case "AboutReaderOnSetup":
+      var button_data = {
+        id: "my-button",
+        title: "My Button",
+        image: "chrome://myaddon/mybutton.svg"
+      };
+      var win = browser.contentWindow;
+      win.dispatchEvent(new CustomEvent("AboutReaderAddButton", { detail: button_data }));
+      break;
+  }
+}
+```
+
+To handle click events for your button, listen for the `AboutReaderButtonClicked-<id>` event, where `<id>` is your button's id.
+
+```
+gBrowser.addEventListener("AboutReaderButtonClicked-my-button", this, false, true);
+...
+case "AboutReaderButtonClicked-my-button":
+  //Handle button click event
+  break;
+```
+
+To remove your button from the toolbar, dispatch an `AboutReaderRemoveButton` event on the DOM window and specify your button's id in the event detail.
+
+```
+var win = browser.contentWindow;
+var button_data = { id: "my_button" };
+win.dispatchEvent(new CustomEvent("AboutReaderRemoveButton", { detail: button_data }));
+```
+
+## License
+
+This code is licensed under Mozilla Public License 2.0, available at:
 https://www.mozilla.org/en-US/MPL/2.0/
 
-The Readability library is copyright (c) 2010 Arc90 Inc and is avilable at:
-https://github.com/mozilla/readability
 
-The Readability library is licensed under Apache License 2.0, available at:
-http://www.apache.org/licenses/LICENSE-2.0
