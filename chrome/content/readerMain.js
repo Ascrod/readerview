@@ -16,9 +16,12 @@ var gStrings = Services.strings.createBundle("chrome://readerview/locale/aboutRe
 
 var AboutReaderListener = {
 
+  get version() {
+    return "2.0.0";
+  },
+
   init() {
-    this.checkFirstRun();
-    this.checkPrefs();
+    this.checkInstall();
     this.initContextMenu();
 
     gBrowser.addEventListener("AboutReaderContentLoaded", this, false, true);
@@ -36,63 +39,79 @@ var AboutReaderListener = {
     window.addEventListener("SSTabRestored", this.onTabRestored, false);
   },
 
-  //Adds the reader button to the urlbar on first run.
-  checkFirstRun() {
-    var first_run = Services.prefs.getBoolPref("extensions.reader.first_run");
-    if (first_run == true) {
-      Services.prefs.setBoolPref("extensions.reader.first_run", false);
-      const afterId = "urlbar-container";
-      const buttonId = "reader-mode-button";
-      var prevNode = document.getElementById(afterId);
-      var button = document.getElementById(buttonId);
-      if (prevNode && !button) {
-        var toolbar = prevNode.parentNode;
-        toolbar.insertItem(buttonId, prevNode.nextSibling);
-        toolbar.setAttribute("currentset", toolbar.currentSet);
-        document.persist(toolbar.id, "currentset");
-      }
-    }
-  },
-
-  //Check for any necessary preference migration.
-  checkPrefs() {
+  //Check the install environment and determine whether we need to do any
+  //first-run actions or preference migration.
+  checkInstall() {
     var pb_rv = Services.prefs.getBranch("extensions.reader.");
 
-    //Check if we need to migrate preference values from 1.x.
-    var test_type = pb_rv.getPrefType("toolbar.vertical");
-    if (test_type != pb_rv.PREF_INVALID) {
-      var pb_tk = Services.prefs.getBranch("reader.");
-      var prefs = [
-        "color_scheme",
-        "color_scheme.values",
-        "content_width",
-        "errors.includeURLs",
-        "font_size",
-        "font_type",
-        "has_used_toolbar",
-        "line_height",
-        "parse-node-limit",
-        "parse-on-load.enabled",
-        "parse-on-load.force-enabled",
-        "toolbar.vertical"
-      ];
+    //Check if we have a version string.
+    if (pb_rv.getPrefType("version") == Services.prefs.PREF_INVALID) {
 
-      prefs.forEach(function(pref) {
-        var type = pb_rv.getPrefType(pref);
-        switch (type) {
-          case Services.prefs.PREF_BOOL:
-            pb_tk.setBoolPref(pref, pb_rv.getBoolPref(pref));
-            break;
-          case Services.prefs.PREF_INT:
-            pb_tk.setIntPref(pref, pb_rv.getIntPref(pref));
-            break;
-          case Services.prefs.PREF_STRING:
-            pb_tk.setCharPref(pref, pb_rv.getCharPref(pref));
-            break;
+      //Check for the first_run pref used in version 1.x.
+      if (pb_rv.getPrefType("first_run") != Services.prefs.PREF_INVALID) {
+
+        //Need to migrate preference values to toolkit.
+        var pb_tk = Services.prefs.getBranch("reader.");
+        var prefs = [
+          "color_scheme",
+          "color_scheme.values",
+          "content_width",
+          "errors.includeURLs",
+          "font_size",
+          "font_type",
+          "has_used_toolbar",
+          "line_height",
+          "parse-node-limit",
+          "parse-on-load.enabled",
+          "parse-on-load.force-enabled",
+          "toolbar.vertical"
+        ];
+
+        prefs.forEach(function(pref) {
+          if (!pb_rv.prefHasUserValue(pref)) {
+            return;
+          }
+          var type = pb_rv.getPrefType(pref);
+          switch (type) {
+            case Services.prefs.PREF_BOOL:
+              pb_tk.setBoolPref(pref, pb_rv.getBoolPref(pref));
+              break;
+            case Services.prefs.PREF_INT:
+              pb_tk.setIntPref(pref, pb_rv.getIntPref(pref));
+              break;
+            case Services.prefs.PREF_STRING:
+              pb_tk.setCharPref(pref, pb_rv.getCharPref(pref));
+              break;
+          }
+          pb_rv.clearUserPref(pref);
+        });
+        //Clear the first_run pref.
+        pb_rv.clearUserPref("first_run");
+
+      } else {
+
+        //Fresh install.
+        //Add the reader button to the urlbar.
+        const afterId = "urlbar-container";
+        const buttonId = "reader-mode-button";
+        var prevNode = document.getElementById(afterId);
+        var button = document.getElementById(buttonId);
+        if (prevNode && !button) {
+          var toolbar = prevNode.parentNode;
+          toolbar.insertItem(buttonId, prevNode.nextSibling);
+          toolbar.setAttribute("currentset", toolbar.currentSet);
+          document.persist(toolbar.id, "currentset");
         }
-        pb_rv.clearUserPref(pref);
-      });
+      }
+    } else {
+      //TODO: Check if our current version is higher than the saved version.
+      //If so, do any other preference migration here.
+      //Version numbers must follow the standard GNU versioning scheme:
+      //  Major.Minor.Revision
     }
+
+    //Set the current version
+    pb_rv.setCharPref("version", this.version);
   },
 
   initContextMenu() {
