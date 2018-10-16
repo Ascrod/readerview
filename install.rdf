@@ -11,6 +11,7 @@
         <em:version>2.0.0</em:version>
         <em:creator>Ascrod</em:creator>
         <em:homepageURL>https://github.com/ascrod/readerview</em:homepageURL>
+        <em:optionsURL>chrome://readerview/content/readerPrefs.xul</em:optionsURL>
         <em:iconURL>chrome://readerview/skin/icons/reader.svg</em:iconURL>
         <em:description>Port of Firefox Reader View for Pale Moon.</em:description>
         <em:targetApplication>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!DOCTYPE prefwindow SYSTEM "chrome://readerview/locale/readerPrefs.dtd">
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css" ?>
+<?xml-stylesheet href="chrome://readerview/skin/readerPrefs.css" type="text/css" ?>
+
+<prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            id="readerview-prefs"
+            title="&reader.prefs.windowname;"
+            onload="AboutReaderPrefs.onLoad();"
+            buttons="accept,cancel,extra1"
+            buttonlabelextra1="&reader.prefs.reset.label;"
+            ondialogextra1="AboutReaderPrefs.onReset()"
+            >
+
+    <script type="application/javascript"
+            src="chrome://readerview/content/readerPrefs.js"/>
+
+    <prefpane id="readerview-prefs-pane">
+        <preferences>
+            <preference id="pref-readerview-location-urlbar"
+                        name="extensions.reader.location.urlbar"
+                        type="bool"/>
+            <preference id="pref-readerview-hotkey-enabled"
+                        name="extensions.reader.hotkey.enabled"
+                        type="bool"/>
+        </preferences>
+
+        <vbox id="vbox-prefs" align="left">
+            <checkbox id="checkbox-readerview-location-urlbar"
+                    preference="pref-readerview-location-urlbar"
+                    label="&reader.prefs.location_urlbar.label;"/>
+            <checkbox id="checkbox-readerview-hotkey-enabled"
+                    preference="pref-readerview-hotkey-enabled"
+                    label="&reader.prefs.hotkey_enabled.label;"/>
+        </vbox>
+    </prefpane>
+</prefwindow>
