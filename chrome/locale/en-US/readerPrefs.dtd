@@ -5,4 +5,7 @@
 <!ENTITY reader.prefs.windowname                "Reader View Preferences">
 <!ENTITY reader.prefs.reset.label               "Reset">
 <!ENTITY reader.prefs.location_urlbar.label     "Show in URL bar (fixed position)">
-<!ENTITY reader.prefs.hotkey_enabled.label      "Enable hotkey (Ctrl+Alt+R)">
+<!ENTITY reader.prefs.hotkey_enabled.label      "Enable hotkey">
+<!ENTITY reader.prefs.hotkey_linux.label        "Ctrl+Alt+R (Mac/Linux)">
+<!ENTITY reader.prefs.hotkey_windows.label      "F9 (Windows)">
+<!ENTITY reader.prefs.hotkey_custom.label       "Custom:">

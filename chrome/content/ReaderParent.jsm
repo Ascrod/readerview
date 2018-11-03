@@ -30,6 +30,7 @@ var ReaderParent = {
     let menuItem = win.document.getElementById("menu_readerModeItem");
     let command = win.document.getElementById("View:ReaderView");
     let key = win.document.getElementById("key_toggleReaderMode");
+    let prefKey = UIPrefs.hotkeyValue;
     if (UIPrefs.hotkeyEnabled)
         menuItem.setAttribute("key", "key_toggleReaderMode");
     else
@@ -72,6 +73,23 @@ var ReaderParent = {
       command.setAttribute("accesskey", gGlobalStringBundle.GetStringFromName("readerView.enter.accesskey"));
       key.setAttribute("disabled", !(browser.isArticle && UIPrefs.hotkeyEnabled));
     }
+    key.removeAttribute("key");
+    key.removeAttribute("keycode");
+    key.removeAttribute("modifiers");
+    if (prefKey.key) {
+        key.setAttribute("key", prefKey.key);
+    }
+    if (prefKey.keycode) {
+        key.setAttribute("keycode", prefKey.keycode);
+    }
+    if (prefKey.modifiers.length > 0) {
+        key.setAttribute("modifiers", prefKey.modifiers.join(" "));
+    }
+
+    // The key's keyset has to be re-added to its parent node, or the
+    // new attributes won't be applied.
+    let keyset = win.document.getElementById("mainKeyset");
+    keyset.parentNode.appendChild(keyset);
   },
 
   forceShowReaderIcon(browser) {

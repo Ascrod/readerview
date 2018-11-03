@@ -129,13 +129,24 @@ var AboutReaderListener = {
 
     Services.prefs.addObserver("extensions.reader.location.urlbar", this.UIPrefObserver, false);
     Services.prefs.addObserver("extensions.reader.hotkey.enabled", this.UIPrefObserver, false);
+    Services.prefs.addObserver("extensions.reader.hotkey.value", this.UIPrefObserver, false);
 
     var location_pref = Services.prefs.getBoolPref("extensions.reader.location.urlbar");
-    var hotkey_pref = Services.prefs.getBoolPref("extensions.reader.hotkey.enabled");
+    var hotkey_enabled_pref = Services.prefs.getBoolPref("extensions.reader.hotkey.enabled");
+    var hotkey_value_pref = Services.prefs.getCharPref("extensions.reader.hotkey.value");
+
+    // Parse the hotkey value
+    var hotkey_value_obj = { modifiers: [], key: "", keycode: "" };
+    try {
+      hotkey_value_obj = JSON.parse(hotkey_value_pref);
+    } catch (e) {
+      Cu.reportError("Failed to parse Reader View hotkey configuration: " + e.message);
+    }
 
     this.uiPrefs = {
       showInUrlbar: location_pref,
-      hotkeyEnabled: hotkey_pref
+      hotkeyEnabled: hotkey_enabled_pref,
+      hotkeyValue: hotkey_value_obj,
     }
 
     return this.uiPrefs;
@@ -147,7 +158,9 @@ var AboutReaderListener = {
       if (aTopic != "nsPref:changed") {
         return;
       }
-      if (aData == "extensions.reader.location.urlbar" || aData == "extensions.reader.hotkey.enabled")
+      if (aData == "extensions.reader.location.urlbar" ||
+          aData == "extensions.reader.hotkey.enabled" ||
+          aData == "extensions.reader.hotkey.value")
         ReaderParent.updateReaderButton(gBrowser.selectedBrowser, AboutReaderListener.UIPrefs);
     }
   },

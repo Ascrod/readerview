@@ -12,6 +12,7 @@
             id="readerview-prefs"
             title="&reader.prefs.windowname;"
             onload="AboutReaderPrefs.onLoad();"
+            ondialogaccept="AboutReaderPrefs.onAccept();"
             buttons="accept,cancel,extra1"
             buttonlabelextra1="&reader.prefs.reset.label;"
             ondialogextra1="AboutReaderPrefs.onReset()"
@@ -27,7 +28,11 @@
                         type="bool"/>
             <preference id="pref-readerview-hotkey-enabled"
                         name="extensions.reader.hotkey.enabled"
+                        onchange="AboutReaderPrefs.onHotkeyEnabledChange()"
                         type="bool"/>
+            <preference id="pref-readerview-hotkey-value"
+                        name="extensions.reader.hotkey.value"
+                        type="string"/>
         </preferences>
 
         <vbox id="vbox-prefs" align="left">
@@ -37,6 +42,23 @@
             <checkbox id="checkbox-readerview-hotkey-enabled"
                     preference="pref-readerview-hotkey-enabled"
                     label="&reader.prefs.hotkey_enabled.label;"/>
+            <groupbox id="groupbox-readerview-hotkey">
+                <radiogroup id="radiogroup-readerview-hotkey"
+                    oncommand="AboutReaderPrefs.onHotkeySelectionChange()">
+                    <radio value="linux"
+                        id="radio-readerview-hotkey-linux"
+                        label="&reader.prefs.hotkey_linux.label;"/>
+                    <radio value="windows"
+                        id="radio-readerview-hotkey-windows"
+                        label="&reader.prefs.hotkey_windows.label;"/>
+                    <radio value="custom"
+                        id="radio-readerview-hotkey-custom"
+                        label="&reader.prefs.hotkey_custom.label;"/>
+                </radiogroup>
+                <textbox id="textbox-readerview-hotkey-display"
+                        width="300"
+                        onkeypress="AboutReaderPrefs.onHotkeyCustomInput(event)"/>
+            </groupbox>
         </vbox>
     </prefpane>
 </prefwindow>
