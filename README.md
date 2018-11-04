@@ -19,9 +19,9 @@ Many features in Reader View are identical between Mozilla Firefox and this add-
 The following features are exclusive to this add-on:
 
 * Images may be shown or hidden using a button on the toolbar.
-* The Reader button is now a movable toolbar button. (If you wish to see the Reader Mode button in the URL bar as it is in Firefox, you can set the `extensions.reader.location.urlbar` preference in `about:config` to `true`.)
+* The Reader button is now a movable toolbar button. (If you wish to see the Reader Mode button in the URL bar as it is in Firefox, you can check the "Show in URL bar" box in the add-on's preferences window.)
 * Options for automatically opening a link in Reader View are available on the context menu. (If the page is not compatible with Reader View, Reader View will not activate.)
-* The keyboard shortcut may be disabled by setting the `extensions.reader.hotkey.enabled` preference in `about:config` to `false`.
+* The keyboard shortcut may be disabled or changed via the add-on's preferences window.
 
 Several features in the Firefox version are not included in this add-on:
 
