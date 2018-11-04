@@ -1,0 +1,11 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY reader.prefs.windowname                "Préférences de Mode lecture">
+<!ENTITY reader.prefs.reset.label               "Remettez">
+<!ENTITY reader.prefs.location_urlbar.label     "Afficher dans la barre d'URL (position fixe)">
+<!ENTITY reader.prefs.hotkey_enabled.label      "Activez le raccourci clavier">
+<!ENTITY reader.prefs.hotkey_linux.label        "Ctrl+Alt+R (Mac/Linux)">
+<!ENTITY reader.prefs.hotkey_windows.label      "F9 (Windows)">
+<!ENTITY reader.prefs.hotkey_custom.label       "Customisé:">
