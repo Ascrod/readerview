@@ -35,7 +35,6 @@ var ReaderParent = {
         menuItem.setAttribute("key", "key_toggleReaderMode");
     else
         menuItem.removeAttribute("key");
-        menuItem.removeAttribute("acceltext");
 
     if (browser.currentURI.spec.startsWith("about:reader")) {
       let closeText = gGlobalStringBundle.GetStringFromName("readerView.close");
@@ -73,6 +72,7 @@ var ReaderParent = {
       command.setAttribute("accesskey", gGlobalStringBundle.GetStringFromName("readerView.enter.accesskey"));
       key.setAttribute("disabled", !(browser.isArticle && UIPrefs.hotkeyEnabled));
     }
+    menuItem.removeAttribute("acceltext");
     key.removeAttribute("key");
     key.removeAttribute("keycode");
     key.removeAttribute("modifiers");
