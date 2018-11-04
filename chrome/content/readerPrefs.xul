@@ -15,50 +15,48 @@
             ondialogaccept="AboutReaderPrefs.onAccept();"
             buttons="accept,cancel,extra1"
             buttonlabelextra1="&reader.prefs.reset.label;"
-            ondialogextra1="AboutReaderPrefs.onReset()"
-            >
+            ondialogextra1="AboutReaderPrefs.onReset()">
 
-    <script type="application/javascript"
-            src="chrome://readerview/content/readerPrefs.js"/>
+  <script type="application/javascript" src="chrome://readerview/content/readerPrefs.js"/>
 
-    <prefpane id="readerview-prefs-pane">
-        <preferences>
-            <preference id="pref-readerview-location-urlbar"
-                        name="extensions.reader.location.urlbar"
-                        type="bool"/>
-            <preference id="pref-readerview-hotkey-enabled"
-                        name="extensions.reader.hotkey.enabled"
-                        onchange="AboutReaderPrefs.onHotkeyEnabledChange()"
-                        type="bool"/>
-            <preference id="pref-readerview-hotkey-value"
-                        name="extensions.reader.hotkey.value"
-                        type="string"/>
-        </preferences>
+  <prefpane id="readerview-prefs-pane">
+    <preferences>
+      <preference id="pref-readerview-location-urlbar"
+                  name="extensions.reader.location.urlbar"
+                  type="bool"/>
+      <preference id="pref-readerview-hotkey-enabled"
+                  name="extensions.reader.hotkey.enabled"
+                  onchange="AboutReaderPrefs.onHotkeyEnabledChange()"
+                  type="bool"/>
+      <preference id="pref-readerview-hotkey-value"
+                  name="extensions.reader.hotkey.value"
+                  type="string"/>
+    </preferences>
 
-        <vbox id="vbox-prefs" align="left">
-            <checkbox id="checkbox-readerview-location-urlbar"
-                    preference="pref-readerview-location-urlbar"
-                    label="&reader.prefs.location_urlbar.label;"/>
-            <checkbox id="checkbox-readerview-hotkey-enabled"
-                    preference="pref-readerview-hotkey-enabled"
-                    label="&reader.prefs.hotkey_enabled.label;"/>
-            <groupbox id="groupbox-readerview-hotkey">
-                <radiogroup id="radiogroup-readerview-hotkey"
-                    oncommand="AboutReaderPrefs.onHotkeySelectionChange()">
-                    <radio value="linux"
-                        id="radio-readerview-hotkey-linux"
-                        label="&reader.prefs.hotkey_linux.label;"/>
-                    <radio value="windows"
-                        id="radio-readerview-hotkey-windows"
-                        label="&reader.prefs.hotkey_windows.label;"/>
-                    <radio value="custom"
-                        id="radio-readerview-hotkey-custom"
-                        label="&reader.prefs.hotkey_custom.label;"/>
-                </radiogroup>
-                <textbox id="textbox-readerview-hotkey-display"
-                        width="300"
-                        onkeypress="AboutReaderPrefs.onHotkeyCustomInput(event)"/>
-            </groupbox>
-        </vbox>
-    </prefpane>
+    <vbox id="vbox-prefs" align="left">
+      <checkbox id="checkbox-readerview-location-urlbar"
+                preference="pref-readerview-location-urlbar"
+                label="&reader.prefs.location_urlbar.label;"/>
+      <checkbox id="checkbox-readerview-hotkey-enabled"
+                preference="pref-readerview-hotkey-enabled"
+                label="&reader.prefs.hotkey_enabled.label;"/>
+      <groupbox id="groupbox-readerview-hotkey">
+        <radiogroup id="radiogroup-readerview-hotkey"
+                  oncommand="AboutReaderPrefs.onHotkeySelectionChange()">
+          <radio value="linux"
+                 id="radio-readerview-hotkey-linux"
+                 label="&reader.prefs.hotkey_linux.label;"/>
+          <radio value="windows"
+                 id="radio-readerview-hotkey-windows"
+                 label="&reader.prefs.hotkey_windows.label;"/>
+          <radio value="custom"
+                 id="radio-readerview-hotkey-custom"
+                 label="&reader.prefs.hotkey_custom.label;"/>
+        </radiogroup>
+        <textbox id="textbox-readerview-hotkey-display"
+                 width="300"
+                 onkeypress="AboutReaderPrefs.onHotkeyCustomInput(event)"/>
+      </groupbox>
+    </vbox>
+  </prefpane>
 </prefwindow>

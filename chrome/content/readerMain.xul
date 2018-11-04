@@ -10,78 +10,67 @@
     <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
     %browserDTD;
     <!ENTITY % readerDTD SYSTEM "chrome://readerview/locale/readerMain.dtd">
-    %readerDTD;
-]>
+    %readerDTD;]>
 
 <overlay id="readerview-browser-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript" src="chrome://readerview/content/readerMain.js"/>
+  <script type="application/x-javascript" src="chrome://readerview/content/readerUtils.js"/>
 
-    <script type="application/x-javascript" src="chrome://readerview/content/readerMain.js"/>
-    <script type="application/x-javascript" src="chrome://readerview/content/readerUtils.js"/>
+  <toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton id="reader-mode-button"
+                   label="Reader View"
+                   class="toolbarbutton-1 chromeclass-toolbar-additional"
+                   oncommand="ReaderParent.buttonClick(event);"/>
+  </toolbarpalette>
 
-    <toolbarpalette id="BrowserToolbarPalette">
-        <toolbarbutton id="reader-mode-button"
-            label="Reader View"
-            class="toolbarbutton-1 chromeclass-toolbar-additional"
-            oncommand="ReaderParent.buttonClick(event);"
-        />
-    </toolbarpalette>
+  <toolbar id="nav-bar">
+    <toolbaritem id="urlbar-container">
+      <textbox id="urlbar">
+        <hbox id="urlbar-icons">
+          <image id="reader-mode-button-fixed"
+                 position="1"
+                 class="urlbar-icon"
+                 hidden="true"
+                 onclick="ReaderParent.buttonClick(event);"/>
+        </hbox>
+      </textbox>
+    </toolbaritem>
+  </toolbar>
 
-    <toolbar id="nav-bar">
-      <toolbaritem id="urlbar-container">
-        <textbox id="urlbar">
-          <hbox id="urlbar-icons">
-            <image id="reader-mode-button-fixed"
-              position="1"
-              class="urlbar-icon"
-              hidden="true"
-              onclick="ReaderParent.buttonClick(event);"
-            />
-          </hbox>
-        </textbox>
-      </toolbaritem>
-    </toolbar>
-    
-    <commandset id="mainCommandSet">
-        <command id="View:ReaderView"
-            oncommand="ReaderParent.toggleReaderMode(event);"
-        />
-    </commandset>
+  <commandset id="mainCommandSet">
+    <command id="View:ReaderView"
+             oncommand="ReaderParent.toggleReaderMode(event);"/>
+  </commandset>
 
-    <menupopup id="menu_viewPopup">
-        <menuitem id="menu_readerModeItem"
-            observes="View:ReaderView"
-            key="key_toggleReaderMode"
-            hidden="true"
-        />
-    </menupopup>
+  <menupopup id="menu_viewPopup">
+    <menuitem id="menu_readerModeItem"
+              observes="View:ReaderView"
+              key="key_toggleReaderMode"
+              hidden="true"/>
+  </menupopup>
 
-    <keyset id="mainKeyset">
-        <key id="key_toggleReaderMode"
-            command="View:ReaderView"
-            key="R"
-            modifiers="accel,alt"
-            disabled="true"
-        />
-    </keyset>
+  <keyset id="mainKeyset">
+    <key id="key_toggleReaderMode"
+         command="View:ReaderView"
+         key="R"
+         modifiers="accel,alt"
+         disabled="true"/>
+  </keyset>
 
-    <menupopup id="contentAreaContextMenu">
-        <menu id="context-readerView"
-            class="menu-iconic"
-            image="chrome://readerview/skin/icons/reader-gray.svg"
-            label="&reader.openLinkCmdInReader.label;"
-            insertbefore="context-sep-open"
-        >
-            <menupopup id="context-readerView-popup">
-                <menuitem id="context-readerView-tab"
-                    label="&openLinkCmdInTab.label;"
-                    oncommand="AboutReaderListener.openLink(gContextMenu.linkURL, true)"
-                />
-                <menuitem id="context-readerView-current"
-                    label="&openLinkCmdInCurrent.label;"
-                    oncommand="AboutReaderListener.openLink(gContextMenu.linkURL, false)"
-                />
-            </menupopup>
-        </menu>
-    </menupopup>
-
+  <menupopup id="contentAreaContextMenu">
+    <menu id="context-readerView"
+          class="menu-iconic"
+          image="chrome://readerview/skin/icons/reader-gray.svg"
+          label="&reader.openLinkCmdInReader.label;"
+          insertbefore="context-sep-open">
+      <menupopup id="context-readerView-popup">
+        <menuitem id="context-readerView-tab"
+                  label="&openLinkCmdInTab.label;"
+                  oncommand="AboutReaderListener.openLink(gContextMenu.linkURL, true)"/>
+        <menuitem id="context-readerView-current"
+                  label="&openLinkCmdInCurrent.label;"
+                  oncommand="AboutReaderListener.openLink(gContextMenu.linkURL, false)"/>
+      </menupopup>
+    </menu>
+  </menupopup>
 </overlay>
