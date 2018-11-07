@@ -2,10 +2,10 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<!ENTITY reader.prefs.windowname                "Lezerweergave Voorkeuren">
-<!ENTITY reader.prefs.reset.label               "Opnieuw Zetten">
-<!ENTITY reader.prefs.location_urlbar.label     "Weergeven in URL-balk (vaste positie)">
-<!ENTITY reader.prefs.hotkey_enabled.label      "Activeer sneltoets">
+<!ENTITY reader.prefs.windowname                "Voorkeuren Lezerweergave">
+<!ENTITY reader.prefs.reset.label               "Herinitialiseren">
+<!ENTITY reader.prefs.location_urlbar.label     "In de adresbalk weergeven (vaste positie)">
+<!ENTITY reader.prefs.hotkey_enabled.label      "Sneltoets activeren">
 <!ENTITY reader.prefs.hotkey_linux.label        "Ctrl+Alt+R (Mac/Linux)">
 <!ENTITY reader.prefs.hotkey_windows.label      "F9 (Windows)">
 <!ENTITY reader.prefs.hotkey_custom.label       "Aangepast:">
