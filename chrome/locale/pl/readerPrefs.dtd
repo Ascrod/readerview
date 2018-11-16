@@ -2,10 +2,10 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<!ENTITY reader.prefs.windowname                "Preferencje Czytelności">
-<!ENTITY reader.prefs.reset.label               "Nastawić">
-<!ENTITY reader.prefs.location_urlbar.label     "Pokaż w pasku URL (stała pozycja)">
-<!ENTITY reader.prefs.hotkey_enabled.label      "Włącz klawisz skrótu">
+<!ENTITY reader.prefs.windowname                "Ustawienia widoku do czytania">
+<!ENTITY reader.prefs.reset.label               "Zresetuj">
+<!ENTITY reader.prefs.location_urlbar.label     "Na stałe pokazuj w pasku adresu">
+<!ENTITY reader.prefs.hotkey_enabled.label      "Włącz skrót klawiszowy">
 <!ENTITY reader.prefs.hotkey_linux.label        "Ctrl+Alt+R (Mac/Linux)">
 <!ENTITY reader.prefs.hotkey_windows.label      "F9 (Windows)">
-<!ENTITY reader.prefs.hotkey_custom.label       "Dostosowane:">
+<!ENTITY reader.prefs.hotkey_custom.label       "Własny:">
