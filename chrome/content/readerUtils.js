@@ -88,7 +88,7 @@ function openReaderLinkIn(url, where, params) {
 
   let loadInBackground = where == "current" ? false : aInBackground;
   if (loadInBackground == null) {
-    loadInBackground = getBoolPref("browser.tabs.loadInBackground");
+    loadInBackground = Services.prefs.getBoolPref("browser.tabs.loadInBackground");
   }
 
   if (where == "current" && w.gBrowser.selectedTab.pinned) {
