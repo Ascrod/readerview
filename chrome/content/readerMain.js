@@ -11,6 +11,7 @@ Cu.import("resource://gre/modules/Task.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "ReaderParent", "chrome://readerview/content/ReaderParent.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "ReaderMode", "resource://gre/modules/ReaderMode.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "AboutReader", "resource://gre/modules/AboutReader.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "Readerable", "resource://gre/modules/Readerable.jsm");
 
 var gStrings = Services.strings.createBundle("chrome://readerview/locale/aboutReader.properties");
 
@@ -367,7 +368,7 @@ var AboutReaderListener = {
    * painted is not going to work.
    */
   updateReaderButton(browser, forceNonArticle) {
-    if (!ReaderMode.isEnabledForParseOnLoad || this.isAboutReader(browser) ||
+    if (!Readerable.isEnabledForParseOnLoad || this.isAboutReader(browser) ||
         !browser.contentWindow || !(browser.contentDocument instanceof browser.contentWindow.HTMLDocument) ||
         browser.contentDocument.mozSyntheticDocument) {
       return;
@@ -406,7 +407,7 @@ var AboutReaderListener = {
     this.cancelPotentialPendingReadabilityCheck(browser);
     // Only send updates when there are articles; there's no point updating with
     // |false| all the time.
-    if (ReaderMode.isProbablyReaderable(browser.contentDocument)) {
+    if (Readerable.isProbablyReaderable(browser.contentDocument)) {
       browser.isArticle = true;
     } else if (forceNonArticle) {
       browser.isArticle = false;
