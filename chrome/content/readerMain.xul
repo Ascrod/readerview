@@ -18,7 +18,7 @@
 
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="reader-mode-button"
-                   label="Reader View"
+                   label="&reader.main.label;"
                    class="toolbarbutton-1 chromeclass-toolbar-additional"
                    oncommand="ReaderParent.buttonClick(event);"/>
   </toolbarpalette>
@@ -61,7 +61,7 @@
     <menu id="context-readerView"
           class="menu-iconic"
           image="chrome://readerview/skin/icons/reader-gray.svg"
-          label="&reader.openLinkCmdInReader.label;"
+          label="&reader.main.label;"
           insertbefore="context-sep-open">
       <menupopup id="context-readerView-popup">
         <menuitem id="context-readerView-tab"
