@@ -18,7 +18,7 @@ var gStrings = Services.strings.createBundle("chrome://readerview/locale/aboutRe
 var AboutReaderListener = {
 
   get version() {
-    return "2.2.0";
+    return "2.2.1";
   },
 
   init() {
